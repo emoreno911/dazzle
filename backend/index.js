@@ -12,6 +12,7 @@ app.use(apiRoutes);
 // if you didn't import and pass in the routes, you could also write it out yourself:
 // app.use('/', require('./routes/user'));
 
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 })

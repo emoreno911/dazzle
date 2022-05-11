@@ -16,6 +16,7 @@ const Home = () => {
     } = data
 
     const {
+        rqai,
         getBalance,
 		clearPairings,
         makeTransaction,
@@ -34,7 +35,7 @@ const Home = () => {
                         <button 
                             type="button" 
                             className="flex text-sm px-5 py-2 mt-5 text-white rounded-md bg-green-700 focus:outline-none"
-                            onClick={() => makeTransaction()}
+                            onClick={() => rqai()}
                         >
                             Test Transaction
                         </button>

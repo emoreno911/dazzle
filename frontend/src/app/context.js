@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { HashconnectService } from '../utils/service';
+import { request } from '../utils/utilities';
 
 export const DataContext = createContext();
 
@@ -58,8 +59,8 @@ const DataContextProvider = (props) => {
 		let signer = walletService.hashconnect.getSigner(provider);
 		let balance = await provider.getAccountBalance(accountId);
 		console.log(balance)
-		let info = await walletService.requestAccountInfo(accountId)
-		console.log('info...', info)
+		// let info = await requestAccountInfo(accountId)
+		// console.log('info...', info)
 		setSigner(signer);
 		setProvider(provider);
 		setBalance(balance.hbars.toString());
@@ -73,9 +74,36 @@ const DataContextProvider = (props) => {
 		console.log('transaction', result)
 	}
 
+	async function requestAccountInfo(accountId) {
+		const response = await request({
+			url: '/getAccountInfo',
+			method: 'POST',
+			data: { accountId },
+			fname: 'requestAccountInfo'
+		});
+
+		return response;
+	}
+
+	async function getContractData(username) {
+		const response = await request({
+			url: '/getContractData',
+			method: 'POST',
+			data: { username },
+			fname: 'getContractData'
+		});
+
+		return response;
+	}
+
 	function clearPairings() {
 		walletService.clearPairings();
 		setStatus('')
+	}
+
+	async function rqai() {
+		return await getContractData("Bob")
+		//return await requestAccountInfo('0.0.34264077')
 	}
 
 
@@ -93,6 +121,7 @@ const DataContextProvider = (props) => {
 	}
 
 	const fn = {
+		rqai,
 		isMobile,
 		getBalance,
 		clearPairings,
