@@ -24,11 +24,10 @@ const logmessage = (msg) => {
 
 const DataContextProvider = (props) => {
 	const [walletService, setWalletService] = useState();
+	const [accountInfo, setAccountInfo] = useState(null);
+	const [provider, setProvider] = useState('');
+	const [signer, setSigner] = useState('');
 	const [status, setStatus] = useState('');
-	const [balance, setBalance] = useState(0);
-	const [account, setAccount] = useState('');
-	const [provider, setProvider] = useState('')
-	const [signer, setSigner] = useState('')
 
 	useEffect(() => {
 		setWalletService(new HashconnectService());
@@ -42,31 +41,26 @@ const DataContextProvider = (props) => {
 		walletService.hashconnect.pairingEvent.on(data => {
 			console.log('PAIRING DETECTED!!!');
 			setStatus(walletService.status);
-			getBalance();
+			setAccountData();
 		})
 
 		if (walletService.status === 'Paired') {
-			getBalance();
+			setAccountData();
 		}
 	}
 
-	async function getBalance() {
-		let network = "testnet";
-		let topic = walletService.saveData.topic;
-		let accountId = walletService.saveData.pairedAccounts[0];
-		// https://github.com/Hashpack/hashconnect/blob/main/lib/src/provider/provider.ts
-		let provider = walletService.hashconnect.getProvider(network, topic, accountId);
-		let signer = walletService.hashconnect.getSigner(provider);
-		let balance = await provider.getAccountBalance(accountId);
-		console.log(balance)
-		// let info = await requestAccountInfo(accountId)
-		// console.log('info...', info)
+	async function setAccountData() {
+		const network = "testnet";
+		const topic = walletService.saveData.topic;
+		const accountId = walletService.saveData.pairedAccounts[0];
+
+		const provider = walletService.hashconnect.getProvider(network, topic, accountId);
+		const signer = walletService.hashconnect.getSigner(provider);
 		setSigner(signer);
 		setProvider(provider);
-		setBalance(balance.hbars.toString());
-		setAccount(accountId);
-		
-		console.log('data',walletService.saveData)
+
+		const _accountInfo = await getAccountInfo(accountId);
+		setAccountInfo(_accountInfo);
 	}
 
 	async function makeTransaction() {
@@ -74,7 +68,7 @@ const DataContextProvider = (props) => {
 		console.log('transaction', result)
 	}
 
-	async function requestAccountInfo(accountId) {
+	async function getAccountInfo(accountId) {
 		const response = await request({
 			url: '/getAccountInfo',
 			method: 'POST',
@@ -113,17 +107,15 @@ const DataContextProvider = (props) => {
 
 	const data = {
 		walletService,
-		status,
-		account,
-		balance,
+		accountInfo,
 		provider,
-		signer
+		signer,
+		status
 	}
 
 	const fn = {
 		rqai,
 		isMobile,
-		getBalance,
 		clearPairings,
 		makeTransaction,
 		initHashconnectService

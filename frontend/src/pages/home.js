@@ -10,14 +10,12 @@ const Home = () => {
 
     const {
         walletService,
-		status,
-		account,
-		balance,      
+        accountInfo,
+		status,      
     } = data
 
     const {
         rqai,
-        getBalance,
 		clearPairings,
         makeTransaction,
 		initHashconnectService
@@ -30,7 +28,7 @@ const Home = () => {
             (
                 <div className="flex flex-col">
                     <h3 className="text-lg text-white mb-5">
-                        <span>Account {account}</span>
+                        <span>Account {accountInfo.accountId}</span>
                         <small className="block text-gray-400">Select something to send!</small>
                         <button 
                             type="button" 
@@ -40,7 +38,7 @@ const Home = () => {
                             Test Transaction
                         </button>
                     </h3>
-                    <TokenList balance={balance} />
+                    <TokenList balance={accountInfo.balance} />
                     <div className="mb-2"></div>
                     <NftList />
 
