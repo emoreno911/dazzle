@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react"
 
 const toFixedIfNecessary = (n, d) => n 
 
-const TokenList = () => {
+const TokenList = ({balance}) => {
 	return (
 		<div className="p-4 rounded-md text-white bg-color-dark w-full">
 			<h3 className="text-lg font-bold">
@@ -14,7 +14,7 @@ const TokenList = () => {
 				</div>
 				<div className="grow leading-5 p-2">
 					<span className="text-base tracking-tight text-gray-100 dark:text-white">
-						{toFixedIfNecessary(33, 2)}
+						{toFixedIfNecessary(balance, 2)}
 					</span>
 					<small className="text-sm text-gray-400 ml-2">$11.50</small>
 				</div>

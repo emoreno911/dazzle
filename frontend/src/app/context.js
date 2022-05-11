@@ -57,13 +57,20 @@ const DataContextProvider = (props) => {
 		let provider = walletService.hashconnect.getProvider(network, topic, accountId);
 		let signer = walletService.hashconnect.getSigner(provider);
 		let balance = await provider.getAccountBalance(accountId);
-		
+		console.log(balance)
+		let info = await walletService.requestAccountInfo(accountId)
+		console.log('info...', info)
 		setSigner(signer);
 		setProvider(provider);
 		setBalance(balance.hbars.toString());
 		setAccount(accountId);
 		
 		console.log('data',walletService.saveData)
+	}
+
+	async function makeTransaction() {
+		let result = await walletService.makeTransaction(signer)
+		console.log('transaction', result)
 	}
 
 	function clearPairings() {
@@ -89,6 +96,7 @@ const DataContextProvider = (props) => {
 		isMobile,
 		getBalance,
 		clearPairings,
+		makeTransaction,
 		initHashconnectService
 	}
 

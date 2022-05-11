@@ -24,7 +24,7 @@ export class SigningService {
      *  GENERATE A FROZEN TRANSACTION ON YOUR SERVER USING YOUR KEYS AND RETURN IT
      */
 
-    client;
+    client = null;
     pk = "";
     publicKey = "";
     acc = "";

@@ -18,6 +18,7 @@ const Home = () => {
     const {
         getBalance,
 		clearPairings,
+        makeTransaction,
 		initHashconnectService
     } = fn
 
@@ -27,8 +28,18 @@ const Home = () => {
             status === "Paired" ?
             (
                 <div className="flex flex-col">
-                    <h3 className="text-xl text-white mb-5">Select something to send!</h3>
-                    <TokenList />
+                    <h3 className="text-lg text-white mb-5">
+                        <span>Account {account}</span>
+                        <small className="block text-gray-400">Select something to send!</small>
+                        <button 
+                            type="button" 
+                            className="flex text-sm px-5 py-2 mt-5 text-white rounded-md bg-green-700 focus:outline-none"
+                            onClick={() => makeTransaction()}
+                        >
+                            Test Transaction
+                        </button>
+                    </h3>
+                    <TokenList balance={balance} />
                     <div className="mb-2"></div>
                     <NftList />
 

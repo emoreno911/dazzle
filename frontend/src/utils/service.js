@@ -1,10 +1,13 @@
 import { HashConnect } from 'hashconnect';
 import { 
+    TransferTransaction,
+    AccountInfoQuery,
     ContractCallQuery, 
     ContractFunctionParameters, 
     ContractExecuteTransaction, 
     TransactionReceipt,
-    Hbar 
+    Hbar, 
+    HbarUnit
 } from '@hashgraph/sdk';
 import { SigningService } from './signing';
 import { appMetadata } from './utilities';
@@ -64,7 +67,7 @@ export class HashconnectService {
     }
 
     setUpEvents() {
-
+        console.log("Paired Accounts", this.saveData.pairedAccounts)
         this.SigningService = new SigningService(
             this.saveData.pairedAccounts[this.accIndex], 
             this.saveData.privateKey
@@ -110,74 +113,35 @@ export class HashconnectService {
         this.hashconnect.connectToLocalWallet(this.saveData.pairingString);
     }
 
-    async callContract(contractId) {
-        //this is the example contract from https://hedera.com/blog/how-to-deploy-smart-contracts-on-hedera-part-1-a-simple-getter-and-setter-contract
-        let trans = new ContractCallQuery()
-            .setContractId(contractId)
-            .setGas(100000)
-            .setFunction("getMobileNumber", new ContractFunctionParameters().addString("Alice"))
-            .setMaxQueryPayment(new Hbar(0.00000001));
+    async makeTransaction(signer) {
+        let trans = await new TransferTransaction()
+            //.addHbarTransfer(this.saveData.pairedAccounts[0], -1)
+            //.addHbarTransfer("0.0.34407878", 1)
+            .addNftTransfer("0.0.34736300", 1, this.saveData.pairedAccounts[0], "0.0.34407878")
+            .freezeWithSigner(signer);
 
-        let transactionBytes = await trans.toBytes();
+        let res = await trans.executeWithSigner(signer);
 
-        let res = await this.sendTransaction(transactionBytes, this.saveData.pairedAccounts[this.accIndex], false);
-
-        //handle response
-        let responseData = {
-            response: res,
-            receipt: null
-        };
-
-        //if(res.success) responseData.receipt = TransactionReceipt.fromBytes(res.receipt);
-
-        return responseData;
+        return res
     }
 
-    async executeContract(contractId) {
-        let trans = new ContractExecuteTransaction()
-            .setContractId(contractId)
-            .setGas(100000)
-            .setPayableAmount(new Hbar(1))
-            .setFunction("setMobileNumber", new ContractFunctionParameters().addString("Barney").addUint256(5551122))
-            .setMaxTransactionFee(new Hbar(0.75));
+    async requestAccountInfo(accountId) {
+        // let request = {
+        //     topic: this.saveData.topic,
+        //     network: "testnet",
+        //     multiAccount: true
+        // } 
 
-        let transactionBytes = await this.SigningService.signAndMakeBytes(trans, this.saveData.pairedAccounts[this.accIndex]);
+        // await this.hashconnect.requestAdditionalAccounts(this.saveData.topic, request);
+        //Create the account info query
+        const query = new AccountInfoQuery().setAccountId(accountId);
 
-        let res = await this.sendTransaction(transactionBytes, this.saveData.pairedAccounts[this.accIndex], false);
+        //Sign with client operator private key and submit the query to a Hedera network
+        if (!this.SigningService.client)
+            this.SigningService.init()
+        const accountInfo = await query.execute(this.SigningService.client);
 
-        //handle response
-        let responseData= {
-            response: res,
-            receipt: null
-        }
-
-        //if(res.success) responseData.receipt = TransactionReceipt.fromBytes(res.receipt);
-
-        return responseData;
-    }
-
-    async sendTransaction(trans, acctToSign, return_trans = false) {
-        const transaction = {
-            topic: this.saveData.topic,
-            byteArray: trans,
-            
-            metadata: {
-                accountToSign: acctToSign,
-                returnTransaction: return_trans
-            }
-        }
-
-        return await this.hashconnect.sendTransaction(this.saveData.topic, transaction)
-    }
-
-    async requestAccountInfo() {
-        let request = {
-            topic: this.saveData.topic,
-            network: "mainnet",
-            multiAccount: true
-        } 
-
-        await this.hashconnect.requestAdditionalAccounts(this.saveData.topic, request);
+        return accountInfo
     }
 
     saveDataInLocalstorage() {
