@@ -1,14 +1,17 @@
-const express = require("express");
-
-// Initialize Express
+const express = require('express');
 const app = express();
+const cors = require('cors');
+const apiRoutes = require('./routes/api');
 
-// Create GET request
-app.get("/", (req, res) => {
-  res.send("Express server online");
-});
+const PORT = 5000;
 
-// Initialize server
-app.listen(5000, () => {
-  console.log("Running on port 5000.");
-});
+app.use(express.json());
+app.use(cors());
+app.use(apiRoutes);
+
+// if you didn't import and pass in the routes, you could also write it out yourself:
+// app.use('/', require('./routes/user'));
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+})
