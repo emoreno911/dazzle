@@ -1,6 +1,12 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { HashconnectService } from '../utils/service';
-import { request } from '../utils/utilities';
+import {
+	request,
+	getAccountInfo,
+	getAccountNfts,
+	getAccountTokens,
+	getTokenInfo
+} from '../utils/api';
 
 export const DataContext = createContext();
 
@@ -23,8 +29,10 @@ const logmessage = (msg) => {
 }
 
 const DataContextProvider = (props) => {
+	const [accountTokens, setAccountTokens] = useState([]);
+	const [accountInfo, setAccountInfo] = useState({});
+	const [accountNfts, setAccountNfts] = useState({});
 	const [walletService, setWalletService] = useState();
-	const [accountInfo, setAccountInfo] = useState(null);
 	const [provider, setProvider] = useState('');
 	const [signer, setSigner] = useState('');
 	const [status, setStatus] = useState('');
@@ -59,24 +67,25 @@ const DataContextProvider = (props) => {
 		setSigner(signer);
 		setProvider(provider);
 
+		// const _accountTokens = await getAccountTokens(accountId);
+		// setAccountTokens(_accountTokens);
+
+		const _accountNfts = await getAccountNfts(accountId);
+		setAccountNfts(_accountNfts);
+
 		const _accountInfo = await getAccountInfo(accountId);
 		setAccountInfo(_accountInfo);
+
+		const _accountTokens = _accountInfo.balance.tokens.map(t => getTokenInfo(t.token_id))
+		Promise.all(_accountTokens).then(result => {
+			setAccountTokens(result)
+		})
+		
 	}
 
 	async function makeTransaction() {
 		let result = await walletService.makeTransaction(signer)
 		console.log('transaction', result)
-	}
-
-	async function getAccountInfo(accountId) {
-		const response = await request({
-			url: '/getAccountInfo',
-			method: 'POST',
-			data: { accountId },
-			fname: 'requestAccountInfo'
-		});
-
-		return response;
 	}
 
 	async function getContractData(username) {
@@ -96,7 +105,7 @@ const DataContextProvider = (props) => {
 	}
 
 	async function rqai() {
-		return await getContractData("Bob")
+		return await getAccountInfo("0.0.34736300")
 		//return await requestAccountInfo('0.0.34264077')
 	}
 
@@ -107,7 +116,9 @@ const DataContextProvider = (props) => {
 
 	const data = {
 		walletService,
+		accountTokens,
 		accountInfo,
+		accountNfts,
 		provider,
 		signer,
 		status

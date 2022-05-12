@@ -1,53 +1,59 @@
-import React, { useContext, useState } from "react"
+import ModalSendItem from './ModalSendItem';
+import { toFixedIfNecessary } from '../../utils/utilities';
 
-const toFixedIfNecessary = (n, d) => n 
+const TokenItem = ({ symbol, balance, tokenId, type, name }) => {
+	if (type === 'NON_FUNGIBLE_UNIQUE')
+		return <div></div>;
 
-const TokenList = ({balance}) => {
+	return (
+		<div className="flex items-center justify-between mt-3">
+			<div className="p-2">
+				<span className="font-bold">{symbol}</span>
+				<small className="block text-sm text-gray-400">{name}</small>
+			</div>
+			<div className="text-right grow leading-5 p-2">
+				<span className="text-base tracking-tight text-gray-100 dark:text-white">
+					{balance}
+				</span>
+			</div>
+			<div>
+				<ModalSendItem symbol={symbol} />
+			</div>
+		</div>
+	)
+} 
+
+const TokenList = ({ accountInfo, accountTokens }) => {
+	if (Object.keys(accountTokens).length === 0)
+		return <div className="mb-4 text-white">Loading...</div>
+
 	return (
 		<div className="p-4 rounded-md text-white bg-color-dark w-full">
 			<h3 className="text-lg font-bold">
 				<span>Tokens</span> 
 			</h3>
-			<div className="flex items-center justify-between mt-3">
-				<div className="p-2">
-					<span className="font-bold">HBAR</span>
-				</div>
-				<div className="grow leading-5 p-2">
-					<span className="text-base tracking-tight text-gray-100 dark:text-white">
-						{toFixedIfNecessary(balance, 2)}
-					</span>
-					<small className="text-sm text-gray-400 ml-2">$11.50</small>
-				</div>
-				<div>
-					<button
-						type="button"
-						className="flex text-sm p-2 bg-yellow-400 text-white rounded-md hover:bg-yellow-500 focus:outline-none"
-						onClick={() => {}}
-					>
-						<img src="./img/dz-logo-black.png" alt="logo" className="dz-button"/>
-					</button>
-				</div>
-			</div>
-			<div className="flex items-center justify-between mt-3">
-				<div className="p-2">
-					<span className="font-bold">USDC</span>
-				</div>
-				<div className="grow leading-5 p-2">
-					<span className="text-base tracking-tight text-gray-100 dark:text-white">
-						{toFixedIfNecessary(55, 2)}
-					</span>
-					<small className="text-sm text-gray-400 ml-2">$55.00</small>
-				</div>
-				<div>
-					<button
-						type="button"
-						className="flex text-sm p-2 bg-yellow-400 text-white rounded-md hover:bg-yellow-500 focus:outline-none"
-						onClick={() => {}}
-					>
-						<img src="./img/dz-logo-black.png" alt="logo" className="dz-button"/>
-					</button>
-				</div>
-			</div>
+			<TokenItem 
+				name={"Hedera"}
+				symbol={"HBAR"}
+				balance={toFixedIfNecessary(accountInfo.balance.balance/100000000, 2)}
+				tokenId={""}
+			/>
+			{
+				accountTokens.map(item => {
+					const {token_id, symbol, type, name} = item;
+					const {balance} = accountInfo.balance.tokens.find(t => t.token_id === token_id);
+					return (
+						<TokenItem 
+							key={symbol}
+							symbol={symbol}
+							balance={toFixedIfNecessary(balance, 8)}
+							tokenId={token_id}
+							name={name}
+							type={type}
+						/>
+					)
+				})
+			}
 		</div>
 	)
 }

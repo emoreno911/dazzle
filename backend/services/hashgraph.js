@@ -1,6 +1,9 @@
 const { 
+    NftId,
     Client,
+    TokenInfoQuery,
     AccountInfoQuery,
+    TokenNftInfoQuery,
     ContractCallQuery,
     ContractFunctionParameters 
 } = require('@hashgraph/sdk');
@@ -37,7 +40,7 @@ async function callContract(username) {
 	const contractQueryResult = contractQuerySubmit.getUint256(0);
 	//console.log(`- Here's the phone number that you asked for: ${contractQueryResult} \n`);
     return {
-        response: contractQuerySubmit,
+        response: contractQuerySubmit, 
         result: contractQueryResult
     }
 }

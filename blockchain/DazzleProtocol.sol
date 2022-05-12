@@ -4,6 +4,11 @@ pragma solidity >=0.7.0 <0.9.0;
 
 contract DazzleProtocolV1 {
     
+    enum TokenType {
+        FUNGIBLE_COMMON,
+        NON_FUNGIBLE_UNIQUE
+    }
+    
     enum ClaimStatus {
         Opened,
         Closed

@@ -125,25 +125,6 @@ export class HashconnectService {
         return res
     }
 
-    async requestAccountInfo(accountId) {
-        // let request = {
-        //     topic: this.saveData.topic,
-        //     network: "testnet",
-        //     multiAccount: true
-        // } 
-
-        // await this.hashconnect.requestAdditionalAccounts(this.saveData.topic, request);
-        //Create the account info query
-        const query = new AccountInfoQuery().setAccountId(accountId);
-
-        //Sign with client operator private key and submit the query to a Hedera network
-        if (!this.SigningService.client)
-            this.SigningService.init()
-        const accountInfo = await query.execute(this.SigningService.client);
-
-        return accountInfo
-    }
-
     saveDataInLocalstorage() {
         let data = JSON.stringify(this.saveData);
         

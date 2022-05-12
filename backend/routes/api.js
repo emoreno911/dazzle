@@ -1,7 +1,7 @@
 const express = require('express');
 const { 
     callContract,
-    requestAccountInfo 
+    requestAccountInfo,
 } = require('../services/hashgraph')
 
 const router = express.Router();
