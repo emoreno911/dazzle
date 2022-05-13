@@ -1,7 +1,7 @@
 import { useRef } from "react"
 import Modal from "../common/Modal"
 
-const ModalSendItem = ({ symbol }) => {
+const ModalSendToken = ({ symbol }) => {
     const amountInput = useRef();
     const passwordInput = useRef();
 
@@ -62,4 +62,4 @@ const ModalSendItem = ({ symbol }) => {
 	)
 }
 
-export default ModalSendItem
+export default ModalSendToken

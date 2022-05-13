@@ -36,15 +36,27 @@ body {
   width: 24px;
 }
 
+.modalpic {
+  width: 72px;
+  min-width: 72px;
+}
+
 .icopic {
   width: 48px;
   min-width: 48px;
 }
+
 .icopic[alt="no-image"] {
   transform: scale(1.25);
 }
+
 .grow {
   flex-grow: 1;
+}
+
+.home-unpaired {
+  height: calc(100vh - 395px);
+  text-align: center;
 }
 
 header, main, footer {

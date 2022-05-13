@@ -1,4 +1,4 @@
-import ModalSendItem from './ModalSendItem';
+import ModalSendToken from './ModalSendToken';
 import { toFixedIfNecessary } from '../../utils/utilities';
 
 const TokenItem = ({ symbol, balance, tokenId, type, name }) => {
@@ -17,7 +17,7 @@ const TokenItem = ({ symbol, balance, tokenId, type, name }) => {
 				</span>
 			</div>
 			<div>
-				<ModalSendItem symbol={symbol} />
+				<ModalSendToken symbol={symbol} />
 			</div>
 		</div>
 	)

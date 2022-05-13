@@ -1,39 +1,16 @@
-import React, { useContext, useState } from "react"
+import ModalSendNft from './ModalSendNft';
 
-// https://cdn.solanamonkey.business/gen2/371.png
 // https://hedera.com/blog/get-started-with-the-hedera-token-service-part-1-how-to-mint-nfts
 
-const NftItem2 = () => (
-    <div className="flex items-center mx-2 my-2 rounded-lg">
-        <a href="#">
-            <img className="icopic rounded-lg" src="https://cdn.solanamonkey.business/gen2/371.png" alt="" />
-        </a>
-        <div className="grow leading-5 p-2">
-            <a href="#">
-                <h5 className="text-md font-bold tracking-tight text-gray-100 dark:text-white">
-                    Monke #371
-                </h5>
-                <small className="text-sm text-gray-400">A collection of random Monkes with superpowers</small>
-            </a>
-        </div>
-        <div className="p-2 pr-0">
-            <button
-                type="button"
-                className="flex text-sm p-2 bg-yellow-400 text-white rounded-md hover:bg-yellow-500 focus:outline-none"
-                onClick={() => {}}
-            >
-                <img src="./img/dz-logo-black.png" alt="logo" className="dz-button"/>
-            </button>
-        </div>
-    </div>
-)
-
 const NftItem = ({ nft, accountTokens }) => {
-    const { token_id, metadata, serial_number } = nft;
+    const { token_id, metadata, serial_number, symbol } = nft;
 
     let tokenName = token_id;
+    let tokenSymbol = "";
     try {
-        tokenName = accountTokens.find(t => t.token_id === token_id).name
+        let token = accountTokens.find(t => t.token_id === token_id);
+        tokenName = token.name;
+        tokenSymbol = token.symbol;
     } catch (error) {
         //console.log('fail nft tokenName')
     }
@@ -62,13 +39,12 @@ const NftItem = ({ nft, accountTokens }) => {
                 </a>
             </div>
             <div className="p-2 pr-0">
-                <button
-                    type="button"
-                    className="flex text-sm p-2 bg-yellow-400 text-white rounded-md hover:bg-yellow-500 focus:outline-none"
-                    onClick={() => {}}
-                >
-                    <img src="./img/dz-logo-black.png" alt="logo" className="dz-button"/>
-                </button>
+                <ModalSendNft 
+                    nft={nft} 
+                    tokenSymbol={tokenSymbol}
+                    tokenName={tokenName} 
+                    image={image} 
+                />
             </div>
         </div>
     )

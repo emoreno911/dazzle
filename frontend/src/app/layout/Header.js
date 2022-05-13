@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import ModalPairWallet from "../home/ModalPairWallet";
 
 const Header = () => {
 	return (
@@ -13,20 +14,22 @@ const Header = () => {
                             Dazzle Protocol
                         </Link>
                     </h1>
-                    {/* <ul className="mt-4 w-full">
-                        <li className="inline-block"><a className="block font-semibold pr-4 h-12" href="/">Home</a></li>
-                        <li className="inline-block"><a className="block font-semibold pr-4 h-12" href="/faq">Claim</a></li>
-					</ul> */}
+                    <ul className="mt-4 w-full md:pl-2">
+                        <li className="inline-block">
+                            <Link to="/">
+                                <span className="block font-semibold pr-4 h-12">Home</span>
+                            </Link>
+                        </li>
+                        <li className="inline-block">
+                            <Link to="/claim">
+                                <span className="block font-semibold pr-4 h-12">Claim</span>
+                            </Link>
+                        </li>
+					</ul>
 				</div>
 
 				<div className="my-2 px-2 w-full overflow-hidden md:w-2/6 lg:w-1/3 xl:w-1/3 text-center md:text-right hidden md:flex items-start justify-end">
-                    <Link to="/link">
-                        Link
-                    </Link>
-                    <span className="inline-block mx-2"></span>
-                    <Link to="/claim">
-                        Claim
-                    </Link>
+                    <ModalPairWallet />
 				</div>
 			</div>
     </header>

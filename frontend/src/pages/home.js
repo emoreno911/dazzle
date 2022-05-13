@@ -16,7 +16,6 @@ const Home = () => {
     } = data;
 
     const {
-        rqai,
 		clearPairings,
 		initHashconnectService
     } = fn;
@@ -28,49 +27,21 @@ const Home = () => {
             (
                 <div className="flex flex-col">
                     <h3 className="text-lg text-white mb-5">
-                        <span>Account {accountInfo.account}</span>
-                        <small className="block text-gray-400">Select something to send!</small>
+                        <small className="block text-gray-400">Press one of the yellow buttons and Send Tokens or NFTs to Anyone!</small>
                     </h3>
                     
                     <TokenList accountInfo={accountInfo} accountTokens={accountTokens} />
                     <div className="mb-2"></div>
                     <NftList accountNfts={accountNfts} accountTokens={accountTokens} />
 
-                    <div className="flex items-center justify-center">
-                        <button 
-                            type="button" 
-                            className="flex text-sm px-5 py-2 mt-5 text-white rounded-md bg-color-alt focus:outline-none"
-                            onClick={() => clearPairings()}
-                        >
-                            <div>
-                                <span className="block text-md">Clear Pairing</span>
-                            </div>
-                        </button>
+                    <div className="flex items-center justify-center my-5">
+                        <small className="block text-gray-400">Working on Hedera Testnet (Beta)</small>
                     </div>
-
-                    <div className="flex items-center justify-center">
-                        <button 
-                            type="button" 
-                            className="flex text-sm px-5 py-2 mt-5 text-white rounded-md bg-green-700 focus:outline-none"
-                            onClick={() => rqai()}
-                        >
-                            Test Transaction
-                        </button>
-                    </div>
-
                 </div>
             ):
             (
-                <div className="flex items-center justify-center">
-                    <button 
-                        type="button" 
-                        className="flex text-sm px-5 py-2 text-white rounded-md bg-color-alt focus:outline-none"
-                        onClick={() => initHashconnectService()}
-                    >
-                        <div>
-                            <span className="block text-md">Pair Wallet</span>
-                        </div>
-                    </button>
+                <div className="home-unpaired flex items-center justify-center">
+                    <span className="text-5xl py-10 text-gray-500">No Wallet Paired!</span>
                 </div>
             )
         }
