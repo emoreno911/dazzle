@@ -60,3 +60,15 @@ export async function getTokenInfo(tokenId) {
 
     return response;
 }
+
+export async function setDeposit(data) {
+    const response = await request({
+        _baseURL: backendBaseURL,
+        url: `/setDeposit`,
+        method: 'POST',
+        fname: 'setDeposit',
+        data,
+    });
+
+    return response;
+}

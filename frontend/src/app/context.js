@@ -4,8 +4,8 @@ import {
 	request,
 	getAccountInfo,
 	getAccountNfts,
-	getAccountTokens,
-	getTokenInfo
+	getTokenInfo,
+	setDeposit
 } from '../utils/api';
 
 export const DataContext = createContext();
@@ -83,9 +83,14 @@ const DataContextProvider = (props) => {
 		
 	}
 
+	async function maketDeposit(data) {
+		let result = await setDeposit(data);
+		console.log('Deposit', result);
+	}
+
 	async function makeTransaction() {
-		let result = await walletService.makeTransaction(signer)
-		console.log('transaction', result)
+		let result = await walletService.makeTransaction(signer);
+		console.log('transaction', result);
 	}
 
 	async function getContractData(username) {
@@ -127,6 +132,7 @@ const DataContextProvider = (props) => {
 	const fn = {
 		rqai,
 		isMobile,
+		maketDeposit,
 		clearPairings,
 		makeTransaction,
 		initHashconnectService

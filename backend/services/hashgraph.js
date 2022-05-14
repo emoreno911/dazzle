@@ -1,9 +1,6 @@
 const { 
-    NftId,
     Client,
-    TokenInfoQuery,
     AccountInfoQuery,
-    TokenNftInfoQuery,
     ContractCallQuery,
     ContractFunctionParameters 
 } = require('@hashgraph/sdk');

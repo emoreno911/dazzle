@@ -1,4 +1,5 @@
 const express = require('express');
+const { v4: uuidv4 } = require('uuid');
 const { 
     callContract,
     requestAccountInfo,
@@ -18,11 +19,11 @@ router.post('/getContractData', async (request, response) => {
     response.json(result);
 });
 
-router.post('/setDeposit', (request, response) => {
-	const {tokenId, amount, sender, isFungible, hash} = request.body;
-    const id = ""; // generate deposit id
+router.post('/setDeposit', async (request, response) => {
+	const {tokenId, amount, sender, tokenType, hash} = request.body;
+    const id = uuidv4(); // generate deposit id
 	
-    response.json({sender, tokenId});
+    response.json({id, sender, tokenId, amount, tokenType, hash});
 });
 
 module.exports = router

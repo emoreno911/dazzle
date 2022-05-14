@@ -17,7 +17,11 @@ const TokenItem = ({ symbol, balance, tokenId, type, name }) => {
 				</span>
 			</div>
 			<div>
-				<ModalSendToken symbol={symbol} />
+				<ModalSendToken 
+					symbol={symbol} 
+					tokenId={tokenId}
+					tokenType={type}
+				/>
 			</div>
 		</div>
 	)
@@ -33,10 +37,11 @@ const TokenList = ({ accountInfo, accountTokens }) => {
 				<span>Tokens</span> 
 			</h3>
 			<TokenItem 
+				tokenId={0}
 				name={"Hedera"}
 				symbol={"HBAR"}
+				type={"FUNGIBLE_COMMON"}
 				balance={toFixedIfNecessary(accountInfo.balance.balance/100000000, 2)}
-				tokenId={""}
 			/>
 			{
 				accountTokens.map(item => {

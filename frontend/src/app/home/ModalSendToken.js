@@ -1,12 +1,30 @@
-import { useRef } from "react"
+import { useRef, useContext } from "react"
 import Modal from "../common/Modal"
+import { DataContext } from "../context";
+import { makeHash, toNumber } from "../../utils/utilities";
 
-const ModalSendToken = ({ symbol }) => {
+const ModalSendToken = ({ symbol, tokenId, tokenType }) => {
+    const { 
+        data:{ accountInfo },
+		fn:{ maketDeposit }		 
+	} = useContext(DataContext);
+
     const amountInput = useRef();
     const passwordInput = useRef();
 
-    const submit = () => {
-        console.log(amountInput.current.value, passwordInput.current.value)
+    const submit = async () => {
+        const amount = toNumber(amountInput.current.value);
+        const pwd = passwordInput.current.value;
+        const hash = await makeHash(pwd);
+        console.log(amount, pwd, hash);
+
+        maketDeposit({
+            sender: accountInfo.account,
+            tokenId,
+            tokenType,
+            amount,
+            hash
+        })
 
         // send info to BE => createDeposit
         // clear
