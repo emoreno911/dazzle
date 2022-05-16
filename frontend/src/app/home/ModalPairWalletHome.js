@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import Modal from "../common/Modal";
 import { DataContext } from "../context";
 
-const ModalPairWallet = ({}) => {
+const ModalPairWalletHome = ({}) => {
 	const { 
 		data:{status, accountInfo, pairingString},
 		fn:{initHashconnectService, clearPairings}		 
@@ -22,18 +22,14 @@ const ModalPairWallet = ({}) => {
 		<Modal
 			activator={({ setShow }) => (
 				<button 
-					type="button" 
-					className="flex text-sm px-5 py-2 text-white rounded-md bg-color-alt focus:outline-none"
-					onClick={() => setShow(true)}
-				>
-					<div>
-						{
-							status === "Paired" ?
-							<span className="block text-md">Acc: {accountInfo.account}</span> :
-							<span className="block text-md">Pair Wallet</span>
-						}
-					</div>
-				</button>
+                    type="button" 
+                    className="flex text-lg px-5 py-2 my-5 text-white rounded-md bg-yellow-500 focus:outline-none"
+                    onClick={() => setShow(true)}
+                >
+                    <div>
+                        <span className="block text-lg">Start Here!</span>
+                    </div>
+                </button>
 			)}
 		>
 			<div className="bg-color-accent pt-4 pb-8 px-8 rounded-md text-white">
@@ -95,4 +91,4 @@ const ModalPairWallet = ({}) => {
 	)
 }
 
-export default ModalPairWallet
+export default ModalPairWalletHome

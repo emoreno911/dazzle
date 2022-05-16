@@ -1,33 +1,53 @@
-import { useRef, useContext } from "react"
+import { useState, useRef, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Modal from "../common/Modal"
 import { DataContext } from "../context";
 import { makeHash, toNumber } from "../../utils/utilities";
 
 const ModalSendToken = ({ symbol, tokenId, tokenType }) => {
+    let navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isProcessing, setIsProcessing] = useState(false);
     const { 
         data:{ accountInfo },
-		fn:{ maketDeposit }		 
+		fn:{ makeDeposit }		 
 	} = useContext(DataContext);
 
     const amountInput = useRef();
     const passwordInput = useRef();
 
     const submit = async () => {
+        if (isProcessing)
+            return;
+
         const amount = toNumber(amountInput.current.value);
         const pwd = passwordInput.current.value;
         const hash = await makeHash(pwd);
-        console.log(amount, pwd, hash);
+        const isFungible = tokenType === 'FUNGIBLE_COMMON';
+        setIsProcessing(true);
+        setErrorMessage("");
 
-        maketDeposit({
+        let response = await makeDeposit({
             sender: accountInfo.account,
             tokenId,
-            tokenType,
+            isFungible,
             amount,
             hash
-        })
+        });
 
-        // send info to BE => createDeposit
-        // clear
+        if (response.hasOwnProperty('result')) {
+            if (response.result === "SUCCESS") {
+                navigate(`/link/${response.depositId}`, { replace: true });
+            }
+            else {
+                setErrorMessage("Something went wrong! Try again.");
+            }
+        }
+        else {
+            setErrorMessage("Something went wrong! Try again.");
+        }
+
+        setIsProcessing(false);
         amountInput.current.value = 1;
         passwordInput.current.value = "";
     }
@@ -47,6 +67,7 @@ const ModalSendToken = ({ symbol, tokenId, tokenType }) => {
 		>
 			<div className="bg-color-accent pt-4 pb-8 px-8 rounded-md text-white">
 				<h4 className=" text-lg mb-6">SEND TOKENS</h4>
+                <label className="block mb-5">How much you want to send?</label>
                 <div className="text-center">
                     <input 
                         ref={amountInput}
@@ -63,6 +84,7 @@ const ModalSendToken = ({ symbol, tokenId, tokenType }) => {
                         type="password"
                         className="block w-full leading-normal w-px flex-1 h-10 rounded-lg px-3 mt-1 relative bg-color-dark text-white" 
                     />
+                    { errorMessage && <small className="block text-red-400 mt-2">{errorMessage}</small> }
                 </div>
 				<div className="flex items-center justify-end">
                     <button 
@@ -71,7 +93,7 @@ const ModalSendToken = ({ symbol, tokenId, tokenType }) => {
                         onClick={() => submit()}
                     >
                         <div>
-                            <span className="block text-md">SEND</span>
+                            <span className="block text-md">{ isProcessing ? "Processing..." : "Send" }</span>
                         </div>
                     </button>
                 </div>

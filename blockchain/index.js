@@ -60,6 +60,7 @@ async function main() {
 	// Instantiate the smart contract
 	const contractInstantiateTx = new ContractCreateTransaction()
 		.setBytecodeFileId(bytecodeFileId)
+		.setAdminKey(operatorKey.publicKey)
 		.setGas(1000000)
 		.setConstructorParameters(new ContractFunctionParameters().addUint256(200000000).addString("0.0.34806041"));
 	const contractInstantiateSubmit = await contractInstantiateTx.execute(client);
@@ -74,14 +75,14 @@ async function main() {
 const fromHexString = hexString => new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
 async function testContract() {
-	const bytecodeFileId = "0.0.34816804";
-	const contractId = "0.0.34816805";
+	const bytecodeFileId = "0.0.34819104";
+	const contractId = "0.0.34819105";
 	console.log(`- The smart contract bytecode file ID is ${bytecodeFileId}`);
 	console.log(`- The smart contract ID is: ${contractId} \n`);
 	//console.log(`- The smart contract ID in Solidity format is: ${contractAddress} \n`);
 
 	// Call contract function to update the state variable
-	const iv1 = iv[1];
+	/*const iv1 = iv[1];
 	const contractExecuteTx = new ContractExecuteTransaction()
 		.setContractId(contractId)
 		.setGas(1000000)
@@ -106,13 +107,36 @@ async function testContract() {
 		.setFunction("validateClaim", 
 			new ContractFunctionParameters()
 				.addString("d865027b-9ea1-4c99-9053-0e4da90403b3")
-				.addString("123456782")
+				.addString("12345678")
 		)
 		.setQueryPayment(new Hbar(2));
 	const contractQuerySubmit = await contractQueryTx.execute(client);
 	const contractQueryResult = contractQuerySubmit.getString(0);
+	console.log(`- Here's the phone number that you asked for: \n`, contractQueryResult);*/
+
+	const contractQueryTx = new ContractCallQuery()
+		.setContractId(contractId)
+		.setGas(100000)
+		.setFunction("getBalance")
+		.setQueryPayment(new Hbar(2));
+	const contractQuerySubmit = await contractQueryTx.execute(client);
+	const contractQueryResult = contractQuerySubmit.getUint256(0).toString();
 	console.log(`- Here's the phone number that you asked for: \n`, contractQueryResult);
+
+	const contractExecuteTx = new ContractExecuteTransaction()
+		.setContractId(contractId)
+		.setGas(1000000)
+		.setFunction(
+			"executeClaim",
+			new ContractFunctionParameters()
+				.addString("d865027b-9ea1-4c99-9053-0e4da90403b3")
+				.addString("12345678")
+				.addAddress(AccountId.fromString(addr2).toSolidityAddress())
+		);
+	const contractExecuteSubmit = await contractExecuteTx.execute(client);
+	const contractExecuteRx = await contractExecuteSubmit.getReceipt(client);
+	console.log(`- Contract function call status: ${contractExecuteRx.status} \n`);
 }
 
-//main();
-testContract();
+main();
+//testContract();

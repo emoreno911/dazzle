@@ -1,16 +1,10 @@
 import { HashConnect } from 'hashconnect';
 import { 
+    Hbar,
     TransferTransaction,
-    AccountInfoQuery,
-    ContractCallQuery, 
-    ContractFunctionParameters, 
-    ContractExecuteTransaction, 
-    TransactionReceipt,
-    Hbar, 
-    HbarUnit
 } from '@hashgraph/sdk';
 import { SigningService } from './signing';
-import { appMetadata } from './utilities';
+import { appMetadata, contractId } from './utilities';
 
 export class HashconnectService {
 
@@ -113,15 +107,38 @@ export class HashconnectService {
         this.hashconnect.connectToLocalWallet(this.saveData.pairingString);
     }
 
-    async makeTransaction(signer) {
-        let trans = await new TransferTransaction()
-            //.addHbarTransfer(this.saveData.pairedAccounts[0], -1)
-            //.addHbarTransfer("0.0.34407878", 1)
-            .addNftTransfer("0.0.34736300", 1, this.saveData.pairedAccounts[0], "0.0.34407878")
-            .freezeWithSigner(signer);
+    async makeTransaction(signer, amount, tokenId, serialNumber = null) {
+        let thisAccount = this.saveData.pairedAccounts[0];
+        let shareTokenFee = 0.1; // this is to fund the new wallet
+        let trans;
+        console.log(this.saveData)
+        
+        if (serialNumber !== null) {
+            // Send NFT + shareTokenFee
+            trans = await new TransferTransaction()
+                //.addHbarTransfer(thisAccount, -1*shareTokenFee)
+                //.addHbarTransfer(contractId, 1*shareTokenFee)
+                .addNftTransfer(tokenId, serialNumber, thisAccount, contractId)
+                .freezeWithSigner(signer);
+        }
+        else if (tokenId !== "0") {
+            // Send a fungible Token + shareTokenFee
+            trans = await new TransferTransaction()
+                //.addHbarTransfer(thisAccount, -1*shareTokenFee)
+                //.addHbarTransfer(contractId, 1*shareTokenFee)
+                .addTokenTransfer(tokenId, thisAccount, -1*amount)
+                .addTokenTransfer(tokenId, contractId, 1*amount)
+                .freezeWithSigner(signer);
+        }
+        else {
+            // Send HBAR
+            trans = await new TransferTransaction()
+                .addHbarTransfer(thisAccount, -1*amount)
+                .addHbarTransfer(contractId, 1*amount)
+                .freezeWithSigner(signer);
+        }      
 
         let res = await trans.executeWithSigner(signer);
-
         return res
     }
 
@@ -150,21 +167,4 @@ export class HashconnectService {
         localStorage.removeItem("hashconnectData");
         console.log('Pairings Cleared!')
     }
-
-    /*showResultOverlay(data) {
-            const dialogPopup = new DialogInitializer(ResultModalComponent);
-    
-            dialogPopup.setCustomData({ data: data });
-            
-            dialogPopup.setConfig({
-                Width: '500px',
-                LayoutType: DialogLayoutDisplay.NONE
-            });
-    
-            dialogPopup.setButtons([
-                new ButtonMaker('Done', 'send', ButtonLayoutDisplay.SUCCESS)
-            ]);
-    
-            dialogPopup.openDialog$().subscribe(resp => { });
-    }*/
 }

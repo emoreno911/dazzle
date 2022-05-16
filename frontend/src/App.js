@@ -10,7 +10,8 @@ function App() {
     <DataContextProvider>
         <HashRouter>
             <Routes>
-                <Route path="/link" element={<Link />} />
+                <Route path="/link/:depositId" element={<Link />} />
+                <Route path="/claim/:depositId" element={<Claim />} />
                 <Route path="/claim" element={<Claim />} />
                 <Route path="/" element={<Home />} />
             </Routes>

@@ -20,6 +20,7 @@ a {
 }
 
 body {
+  overflow-x: hidden;
   /* background-image: radial-gradient(currentColor 1px, transparent 1px),radial-gradient(currentColor 1px, transparent 1px);
   background-size: calc(20 * 1px) calc(20 * 1px);
   background-position: 0 0,calc(10 * 1px) calc(10 * 1px); */
@@ -55,8 +56,11 @@ body {
 }
 
 .home-unpaired {
-  height: calc(100vh - 395px);
+  height: calc(100vh - 370px);
   text-align: center;
+}
+.link-page {
+  height: calc(100vh - 370px);
 }
 
 header, main, footer {

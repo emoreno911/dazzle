@@ -64,10 +64,6 @@ contract DazzleProtocolV1 {
         // associate token first (BE) then send response and make transfer in FE
     }
 
-    function getDepositInfo(string memory id) public view returns (string memory deposit_) {
-        return depositToString(id);
-    }
-
     function validateClaim(string memory id, string memory pwd) public view returns(string memory deposit_) {
         require(makeAndCompareHash(id, pwd), "Invalid password, hash doesn't match");
         return depositToString(id);

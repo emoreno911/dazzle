@@ -1,14 +1,14 @@
-import React, { useContext } from "react"
-import Layout from "../app/layout"
+import React, { useContext } from "react";
+import { useParams } from "react-router-dom";
+import EmptyPage from "../app/claim/EmptyPage";
+import ClaimPage from "../app/claim/ClaimPage";
 
-// https://github.com/ed-marquez/hedera-sdk-js/blob/main/examples/create-account.js
 
 function Claim() {
-    return (
-      <Layout>
-        <h3 className="text-xl text-white">Claim something here!</h3>
-      </Layout>
-    );
+  const { depositId } = useParams();
+    return depositId ? 
+      <ClaimPage depositId={depositId} /> : 
+      <EmptyPage />
 }
 
 export default Claim;

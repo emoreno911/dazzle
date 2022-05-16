@@ -1,17 +1,55 @@
-import { useRef } from "react"
+import { useState, useRef, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Modal from "../common/Modal"
+import { DataContext } from "../context";
+import { makeHash, toNumber } from "../../utils/utilities";
 
 const ModalSendNft = ({ nft, tokenName, tokenSymbol, image }) => {
+    let navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isProcessing, setIsProcessing] = useState(false);
+    const { 
+        data:{ accountInfo },
+		fn:{ makeDeposit }		 
+	} = useContext(DataContext);
+    
     const { token_id, metadata, serial_number } = nft;
-    const amountInput = useRef();
     const passwordInput = useRef();
 
-    const submit = () => {
-        console.log(amountInput.current.value, passwordInput.current.value)
+    const submit = async () => {
+        if (isProcessing)
+            return;
 
-        // send info to BE => createDeposit
-        // clear
-        amountInput.current.value = 1;
+        const amount = 1;
+        const isFungible = false;
+        const pwd = passwordInput.current.value;
+        const hash = await makeHash(pwd);
+        setIsProcessing(true);
+        setErrorMessage("");
+
+        let response = await makeDeposit({
+            sender: accountInfo.account,
+            tokenIdSerial: `${token_id}#${serial_number}`,
+            serialNumber: serial_number,
+            tokenId: token_id,
+            isFungible,
+            amount,
+            hash
+        });
+
+        if (response.hasOwnProperty('result')) {
+            if (response.result === "SUCCESS") {
+                navigate(`/link/${response.depositId}`, { replace: true });
+            }
+            else {
+                setErrorMessage("Something went wrong! Try again.");
+            }
+        }
+        else {
+            setErrorMessage("Something went wrong! Try again.");
+        }
+
+        setIsProcessing(false);
         passwordInput.current.value = "";
     }
 
@@ -49,11 +87,7 @@ const ModalSendNft = ({ nft, tokenName, tokenSymbol, image }) => {
                         type="password"
                         className="block w-full leading-normal w-px flex-1 h-10 rounded-lg px-3 mt-1 relative bg-color-dark text-white" 
                     />
-                    <input 
-                        ref={amountInput}
-                        type="hidden" 
-                        defaultValue={1} 
-                    />
+                    { errorMessage && <small className="block text-red-400 mt-2">{errorMessage}</small> }
                 </div>
 				<div className="flex items-center justify-end">
                     <button 

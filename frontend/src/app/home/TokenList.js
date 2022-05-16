@@ -37,7 +37,7 @@ const TokenList = ({ accountInfo, accountTokens }) => {
 				<span>Tokens</span> 
 			</h3>
 			<TokenItem 
-				tokenId={0}
+				tokenId={"0"}
 				name={"Hedera"}
 				symbol={"HBAR"}
 				type={"FUNGIBLE_COMMON"}

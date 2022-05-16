@@ -1,10 +1,14 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { HashconnectService } from '../utils/service';
+import { currentNetwork } from '../utils/utilities';
 import {
 	request,
 	getAccountInfo,
 	getAccountNfts,
 	getTokenInfo,
+	associateToken,
+	validateClaim,
+	executeClaim,
 	setDeposit
 } from '../utils/api';
 
@@ -33,6 +37,7 @@ const DataContextProvider = (props) => {
 	const [accountInfo, setAccountInfo] = useState({});
 	const [accountNfts, setAccountNfts] = useState({});
 	const [walletService, setWalletService] = useState();
+	const [pairingString, setPairingString] = useState("");
 	const [provider, setProvider] = useState('');
 	const [signer, setSigner] = useState('');
 	const [status, setStatus] = useState('');
@@ -44,8 +49,9 @@ const DataContextProvider = (props) => {
 
 	async function initHashconnectService() {
 		const r = await walletService.initHashconnect();
-		setStatus(walletService.status)
-		console.log('psss...', walletService.status, r.pairingString)
+		setStatus(walletService.status);
+		setPairingString(r.pairingString);
+		//console.log('psss...', walletService.status, r.pairingString);
 		walletService.hashconnect.pairingEvent.on(data => {
 			console.log('PAIRING DETECTED!!!');
 			setStatus(walletService.status);
@@ -58,7 +64,7 @@ const DataContextProvider = (props) => {
 	}
 
 	async function setAccountData() {
-		const network = "testnet";
+		const network = currentNetwork;
 		const topic = walletService.saveData.topic;
 		const accountId = walletService.saveData.pairedAccounts[0];
 
@@ -66,9 +72,6 @@ const DataContextProvider = (props) => {
 		const signer = walletService.hashconnect.getSigner(provider);
 		setSigner(signer);
 		setProvider(provider);
-
-		// const _accountTokens = await getAccountTokens(accountId);
-		// setAccountTokens(_accountTokens);
 
 		const _accountNfts = await getAccountNfts(accountId);
 		setAccountNfts(_accountNfts);
@@ -83,25 +86,45 @@ const DataContextProvider = (props) => {
 		
 	}
 
-	async function maketDeposit(data) {
+	async function makeDeposit(data) {
+		// if tokenId != 0 associate token or nft here
+		if (data.tokenId !== "0") {
+			let { tokenId } = data;
+			let associate = await associateToken({tokenId});
+			if (!(associate.result === "SUCCESS" || associate.result === "TOKEN_ALREADY_ASSOCIATED_TO_ACCOUNT")) {
+				console.log('Associate error', associate.result);
+				return associate;
+			}
+		}
+		
+		// if associate success make transfer 
+		showWalletPopup();
+		let serialNumber = !data.isFungible ? data.serialNumber : null;
+		let tokenTX = await walletService.makeTransaction(signer, data.amount, data.tokenId, serialNumber);
+		if (!tokenTX) {
+			console.log('TokenTX', tokenTX);
+			return { result: "FAIL_TOKEN_TX" }
+		}
+		
+		// then setDeposit in smart contract
 		let result = await setDeposit(data);
+		
 		console.log('Deposit', result);
+		return result;
 	}
 
-	async function makeTransaction() {
-		let result = await walletService.makeTransaction(signer);
-		console.log('transaction', result);
+	async function makeValidate(data) {
+		let result = await validateClaim(data);
+		
+		console.log('Validate', result);
+		return result;
 	}
 
-	async function getContractData(username) {
-		const response = await request({
-			url: '/getContractData',
-			method: 'POST',
-			data: { username },
-			fname: 'getContractData'
-		});
-
-		return response;
+	async function makeClaim(data) {
+		// if not HBAR and is user's wallet ask to asociate token first
+		// if create wallet make auto associable
+		let result = await executeClaim(data);
+		console.log('Claim', result);
 	}
 
 	function clearPairings() {
@@ -109,17 +132,12 @@ const DataContextProvider = (props) => {
 		setStatus('')
 	}
 
-	async function rqai() {
-		return await getAccountInfo("0.0.34736300")
-		//return await requestAccountInfo('0.0.34264077')
-	}
-
-
 	const isMobile = () => {
 		return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 	}
 
 	const data = {
+		pairingString,
 		walletService,
 		accountTokens,
 		accountInfo,
@@ -130,11 +148,11 @@ const DataContextProvider = (props) => {
 	}
 
 	const fn = {
-		rqai,
 		isMobile,
-		maketDeposit,
+		makeClaim,
+		makeDeposit,
+		makeValidate,
 		clearPairings,
-		makeTransaction,
 		initHashconnectService
 	}
 
