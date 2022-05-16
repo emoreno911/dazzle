@@ -1,11 +1,11 @@
-export const contractId = "0.0.34819105";
+export const contractId = "0.0.34822145";
 export const currentNetwork = "testnet";
 export const backendBaseURL = "http://localhost:5000";
 export const hederaBaseAPI = "https://testnet.mirrornode.hedera.com";
 
 export const appMetadata = {
 	name: "Dazzle Protocol",
-    description: "The first step into DeFi - Share tokens with Anyone",
+    description: "An easy first step into DeFi - Share tokens with Anyone",
     icon: "https://res.cloudinary.com/dy3hbcg2h/image/upload/v1652131690/dz-logo-black_c86gzb.png"
 }
 

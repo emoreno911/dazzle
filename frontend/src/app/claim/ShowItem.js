@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { getTokenInfo, getNftInfo } from '../../utils/api';
 import {toFixedIfNecessary} from '../../utils/utilities';
+import ModalPairWalletClaim from './ModalPairWalletClaim';
+import ModalCreateWalletClaim from './ModalCreateWalletClaim';
 
 // https://github.com/ed-marquez/hedera-sdk-js/blob/main/examples/create-account.js
 
@@ -21,6 +23,7 @@ function TokenLayout({ tokenId, amount, tokenData }) {
         </>
     )
 }
+
 
 function NftLayout({ tokenId, tokenData }) {
     const { token_id, metadata, serial_number } = tokenData;
@@ -55,28 +58,29 @@ function NftLayout({ tokenId, tokenData }) {
     )
 }
 
-// nft http://localhost:3000/#/claim/e1b40394-fbfd-4702-80d6-65db9773304b 1234
-// token http://localhost:3000/#/claim/37fb9f8d-e49e-44b2-8351-e56c2ded7dcd 1234
-// hbar http://localhost:3000/#/claim/d865027b-9ea1-4c99-9053-0e4da90403b3 12345678
 
 function ShowItem({ item }) {
     const [tokenData, setTokenData] = useState({ symbol: 'HBAR' });
     const {tokenId, amount, sender, isFungible, isClaimed} = item;
-    const claimedText = isClaimed === "0" ? "is available for Claim" : "was already Claimed";
-    const [tId, serial] = isFungible === "1" ? tokenId : tokenId.split("#");
-
+    const wasClaimed = isClaimed !== "0";
+    const claimedText = wasClaimed ? "was already Claimed" : "is available for Claim";
+    const tId = tokenId.indexOf('#') !== -1 ? tokenId.split('#')[0] : tokenId;
+    
     useEffect(() => {
         if (tokenId === "0")
             return;
 
         if (isFungible === "1")
-            getTokenInfo(tId).then(response => { setTokenData(response) })  
-        else 
+            getTokenInfo(tokenId).then(response => { setTokenData(response) })  
+        else {
+            const serial = tokenId.split('#')[1];
             getNftInfo(tId, serial).then(response => { setTokenData(response) })
+        } 
+            
     }, []);
 
     return (
-        <>
+        <div className="link-page">
         {
             isFungible === "1" ?
                 <TokenLayout tokenId={tId} amount={amount} tokenData={tokenData} /> :
@@ -87,28 +91,18 @@ function ShowItem({ item }) {
                 <h4 className='text-center text-gray-400 my-8'>
                     This deposit was created by {sender} and {claimedText}
                 </h4>
-                <button 
-                    type="button" 
-                    className="block w-full text-md my-4 px-8 py-2 text-white rounded-md bg-green-500 focus:outline-none"
-                    onClick={() => {}}
-                >
-                    <div>
-                        <span className="block text-md">{ "Connect Wallet and Claim" }</span>
-                    </div>
-                </button>
-                <button 
-                    type="button" 
-                    className="block w-full text-md my-4 px-8 py-2 text-white rounded-md bg-yellow-500 focus:outline-none"
-                    onClick={() => {}}
-                >
-                    <div>
-                        <span className="block text-md">{ "Create Wallet and Claim" }</span>
-                    </div>
-                </button>
+                {
+                    !wasClaimed && (
+                        <>
+                            <ModalPairWalletClaim buttonText={"Connect Wallet and Claim"} tokenId={tId} item={item} />
+                            <ModalCreateWalletClaim buttonText={"Create Wallet and Claim"} tokenId={tId} item={item} />
+                        </>
+                    )
+                }
             </div>
         </div>
         
-        </>
+        </div>
     )
 }
 

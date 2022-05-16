@@ -40,7 +40,7 @@ const Home = () => {
                     <p className="text-5xl pb-10 text-gray-300 font-semibold">An easy first step into DeFi</p>
                     <p className="text-xl py-3 text-gray-300">Share Tokens and NFTs with your friends, even if they don't have a wallet yet</p>
                     <div>
-                        <ModalPairWalletHome />
+                        <ModalPairWalletHome buttonText={"Start Here!"} />
                     </div>
                     <div className="flex items-center justify-center my-5">
                         <small className="block text-gray-400">Working on Hedera Testnet</small>

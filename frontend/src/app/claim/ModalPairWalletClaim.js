@@ -1,14 +1,18 @@
 import React, { useState, useContext } from "react";
+import {
+	TokenAssociateTransaction
+} from '@hashgraph/sdk';
 import Modal from "../common/Modal";
 import { DataContext } from "../context";
 
-const ModalPairWalletHome = ({ buttonText }) => {
+const ModalPairWalletClaim = ({ buttonText, tokenId, item }) => {
 	const { 
-		data:{status, accountInfo, pairingString},
-		fn:{initHashconnectService, clearPairings}		 
+		data:{status, accountInfo, pairingString, signer},
+		fn:{initHashconnectService, showWalletPopup, makeClaim}		 
 	} = useContext(DataContext);
 
 	const [isTextCopied, setIsTextCopied] = useState(false);
+	const [claimComplete, setClaimComplete] = useState(false);
 
 	const handleCopyToClipboard = () => {
         navigator.clipboard.writeText(pairingString);
@@ -18,17 +22,40 @@ const ModalPairWalletHome = ({ buttonText }) => {
         }, 2500);
     }
 
+	const handleClaimTokens = async () => {
+		if (tokenId === "0") {
+			let res = await makeClaim(tokenId, item);
+			if (res.result === 'SUCCESS') {
+				setClaimComplete(true)
+			}
+		}
+		else {
+			// associate token
+			let trans = await new TokenAssociateTransaction();
+			trans.setTokenIds([tokenId]);
+			trans.setAccountId(accountInfo.account);
+			trans.freezeWithSigner(signer);
+			trans.signWithSigner(signer)
+			showWalletPopup();
+			
+			let res = await trans.executeWithSigner(signer);
+			let res2 = await makeClaim(tokenId, item);
+			if (res2.result === 'SUCCESS') {
+				setClaimComplete(true)
+			}
+		}
+		
+	}
+
 	return (
 		<Modal
 			activator={({ setShow }) => (
 				<button 
                     type="button" 
-                    className="flex text-lg px-5 py-2 my-5 text-white rounded-md bg-yellow-500 focus:outline-none"
+                    className="flex w-full text-center text-md px-5 py-2 my-5 text-white rounded-md bg-yellow-500 focus:outline-none"
                     onClick={() => setShow(true)}
-                >
-                    <div>
-                        <span className="block text-lg">{ buttonText }</span>
-                    </div>
+                > 
+                    <span className="block mx-auto">{ buttonText }</span>    
                 </button>
 			)}
 		>
@@ -61,15 +88,27 @@ const ModalPairWalletHome = ({ buttonText }) => {
 							<h4 className="block mt-6">
 								Paired to Account <span className="font-semibold text-yellow-400">{accountInfo.account}</span>
 							</h4>
-							<button 
-								type="button" 
-								className="flex text-sm px-5 py-2 mt-5 text-white rounded-md bg-color-alt focus:outline-none"
-								onClick={() => clearPairings()}
-							>
-								<div>
-									<span className="block text-md">Clear Pairing</span>
-								</div>
-							</button>
+							{
+								!claimComplete ? (
+									<button 
+										type="button" 
+										className="flex text-sm px-5 py-2 mt-5 text-white rounded-md bg-green-500 focus:outline-none"
+										onClick={() => handleClaimTokens()}
+									>
+										<div>
+											<span className="block text-md">Claim Tokens</span>
+										</div>
+									</button>
+								):
+								(
+									<div>
+										<h4 className="text-xl font-bold my-5">Claim Completed!</h4>
+										<svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+											<path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+										</svg>
+									</div>
+								)
+							}
 						</div>
 					):
 					(
@@ -91,4 +130,4 @@ const ModalPairWalletHome = ({ buttonText }) => {
 	)
 }
 
-export default ModalPairWalletHome
+export default ModalPairWalletClaim

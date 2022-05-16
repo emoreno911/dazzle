@@ -111,7 +111,6 @@ export class HashconnectService {
         let thisAccount = this.saveData.pairedAccounts[0];
         let shareTokenFee = 0.1; // this is to fund the new wallet
         let trans;
-        console.log(this.saveData)
         
         if (serialNumber !== null) {
             // Send NFT + shareTokenFee

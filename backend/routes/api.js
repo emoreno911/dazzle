@@ -5,6 +5,7 @@ const {
     requestAccountInfo,
     executeCreateDeposit,
     callValidateClaim,
+    executeClaimToken,
     executeClaim
 } = require('../services/hedera');
 
@@ -39,6 +40,13 @@ router.post('/validateClaim', async (request, response) => {
 router.post('/executeClaim', async (request, response) => {
 	const { id, pwd, beneficiary } = request.body;
     const result = await executeClaim(id, pwd, beneficiary);
+    response.json(result);
+});
+
+router.post('/executeClaimToken', async (request, response) => {
+	const { id, pwd, beneficiary, tokenId, amount, isFungible } = request.body;
+    const result = 
+        await executeClaimToken(id, pwd, tokenId, amount, isFungible, beneficiary);
     response.json(result);
 });
 

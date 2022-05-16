@@ -56,11 +56,11 @@ body {
 }
 
 .home-unpaired {
-  height: calc(100vh - 370px);
+  min-height: calc(100vh - 370px);
   text-align: center;
 }
 .link-page {
-  height: calc(100vh - 370px);
+  min-height: calc(100vh - 370px);
 }
 
 header, main, footer {

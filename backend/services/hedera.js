@@ -5,6 +5,7 @@ const {
 	PrivateKey,
     AccountInfoQuery,
     ContractCallQuery,
+	TransferTransaction,
 	TokenAssociateTransaction,
 	ContractExecuteTransaction,
     ContractFunctionParameters 
@@ -136,8 +137,81 @@ async function executeClaim(id, pwd, beneficiary) {
     
     return {
         response: contractExecuteSubmit,
-        result: contractExecuteRx
+        result: contractExecuteRx.status.toString()
     }
+}
+
+async function executeClaimToken(id, pwd, tokenId, amount, isFungible, beneficiary) {
+	let claimStatusCheck = await changeClaimStatus(id, pwd, false);
+	
+	if (claimStatusCheck.result !== 'SUCCESS')
+		return claimStatusCheck;
+
+	let transferResult = await executeTokenTransfer(tokenId, amount, isFungible, beneficiary);
+	return transferResult;
+}
+
+async function changeClaimStatus(id, pwd, isClosed) {
+    const client = setClient();
+    const contractExecuteTx = new ContractExecuteTransaction()
+		.setContractId(contractId)
+		.setGas(1000000)
+		.setFunction(
+			"changeClaimStatus",
+			new ContractFunctionParameters()
+				.addString(id)
+				.addString(pwd)
+				.addBool(isClosed)
+		);
+	
+		try {
+			const contractExecuteSubmit = await contractExecuteTx.execute(client);
+			const contractExecuteRx = await contractExecuteSubmit.getReceipt(client);
+			console.log(`- changeClaimStatus: ${contractExecuteRx.status} \n`);
+			
+			return { result: contractExecuteRx.status.toString() }
+		} catch (error) {
+			return { result: 'CLAIM_STATUS_FAIL' }
+		}
+}
+
+async function executeTokenTransfer(tokenId, amount, isFungible, beneficiary) {
+	const client = setClient();
+	let transaction;
+
+	if (isFungible) {
+		transaction = await new TransferTransaction()
+			.addTokenTransfer(tokenId, contractId, -1*amount)
+            .addTokenTransfer(tokenId, beneficiary, 1*amount)
+            .freezeWith(client);
+	}
+	else {
+		transaction = await new TransferTransaction()
+			.addNftTransfer(tokenId, serialNumber, contractId, beneficiary)
+			.freezeWith(client);
+	}
+
+	try {
+		//Sign with the sender account private key
+		const signTx = await transaction.sign(PrivateKey.fromString(operatorPrivateKey));
+		//Sign with the client operator private key and submit to a Hedera network
+		const txResponse = await signTx.execute(client);
+		//Request the receipt of the transaction
+		const receipt = await txResponse.getReceipt(client);
+		//Obtain the transaction consensus status
+		const transactionStatus = receipt.status;
+		console.log("The transaction consensus status " +transactionStatus.toString());
+
+		return {
+			response: transactionStatus.toString(),
+			result: receipt.status.toString()
+		}
+	} catch (error) {
+		return {
+			response: error,
+			result: "TRANSFER_FAIL"
+		}
+	}
 }
 
 
@@ -146,5 +220,6 @@ module.exports = {
     requestAccountInfo,
     executeCreateDeposit,
     callValidateClaim,
+	executeClaimToken,
     executeClaim,
 }

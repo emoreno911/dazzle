@@ -122,3 +122,15 @@ export async function executeClaim(data) {
 
     return response;
 }
+
+export async function executeClaimToken(data) {
+    const response = await request({
+        _baseURL: backendBaseURL,
+        url: `/executeClaimToken`,
+        method: 'POST',
+        fname: 'executeClaimToken',
+        data,
+    });
+
+    return response;
+}

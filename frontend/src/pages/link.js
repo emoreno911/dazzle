@@ -10,12 +10,12 @@ import {
 }  from 'react-share'
 import Layout from "../app/layout"
 
-const baseLinkUrl = (window.location.hostname === 'localhost') ? 'http://localhost:3000/claim/' : 'https://testnet.dazzle.xyz/claim/';
+const baseLinkUrl = (window.location.hostname === 'localhost') ? 'http://localhost:3000/#/claim/' : 'https://testnet.dazzle.xyz/#/claim/';
 
 function Link() {
     const params = useParams();
     const [linkCopied, setLinkCopied] = useState(false);
-    const linkResult = `${baseLinkUrl}#/${params.depositId}`;
+    const linkResult = `${baseLinkUrl}${params.depositId}`;
     const title = "You got a magic link ";
     const iconSize = 48;
 

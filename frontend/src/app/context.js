@@ -3,6 +3,7 @@ import { HashconnectService } from '../utils/service';
 import { currentNetwork } from '../utils/utilities';
 import {
 	request,
+	executeClaimToken,
 	getAccountInfo,
 	getAccountNfts,
 	getTokenInfo,
@@ -11,6 +12,7 @@ import {
 	executeClaim,
 	setDeposit
 } from '../utils/api';
+import { Hbar } from '@hashgraph/sdk';
 
 export const DataContext = createContext();
 
@@ -33,6 +35,7 @@ const logmessage = (msg) => {
 }
 
 const DataContextProvider = (props) => {
+	const [validatedData, setValidatedData] = useState({});
 	const [accountTokens, setAccountTokens] = useState([]);
 	const [accountInfo, setAccountInfo] = useState({});
 	const [accountNfts, setAccountNfts] = useState({});
@@ -107,6 +110,7 @@ const DataContextProvider = (props) => {
 		}
 		
 		// then setDeposit in smart contract
+		data.amount = data.tokenId !== "0" ? data.amount : new Hbar(data.amount).toTinybars().toNumber();
 		let result = await setDeposit(data);
 		
 		console.log('Deposit', result);
@@ -115,16 +119,34 @@ const DataContextProvider = (props) => {
 
 	async function makeValidate(data) {
 		let result = await validateClaim(data);
-		
+		setValidatedData(data);
 		console.log('Validate', result);
 		return result;
 	}
 
-	async function makeClaim(data) {
+	async function makeClaim(tokenId, data) {
 		// if not HBAR and is user's wallet ask to asociate token first
-		// if create wallet make auto associable
-		let result = await executeClaim(data);
-		console.log('Claim', result);
+		if (tokenId === "0") {
+			let result = await executeClaim({
+				id: validatedData.id,
+				pwd: validatedData.pwd,
+				beneficiary: accountInfo.account
+			});
+			console.log('Claim HBAR', result);
+			return result;
+		}
+		else {
+			let result = await executeClaimToken({
+				tokenId,
+				id: validatedData.id,
+				pwd: validatedData.pwd,
+				beneficiary: accountInfo.account,
+				amount: data.amount,
+				isFungible: data.isFungible
+			})
+			console.log('Claim Token', result);
+			return result;
+		}
 	}
 
 	function clearPairings() {
@@ -153,6 +175,7 @@ const DataContextProvider = (props) => {
 		makeDeposit,
 		makeValidate,
 		clearPairings,
+		showWalletPopup,
 		initHashconnectService
 	}
 

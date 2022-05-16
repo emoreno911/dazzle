@@ -62,7 +62,7 @@ async function main() {
 		.setBytecodeFileId(bytecodeFileId)
 		.setAdminKey(operatorKey.publicKey)
 		.setGas(1000000)
-		.setConstructorParameters(new ContractFunctionParameters().addUint256(200000000).addString("0.0.34806041"));
+		.setConstructorParameters(new ContractFunctionParameters().addUint256(100000000).addString("0.0.34806041"));
 	const contractInstantiateSubmit = await contractInstantiateTx.execute(client);
 	const contractInstantiateRx = await contractInstantiateSubmit.getReceipt(client);
 	const contractId = contractInstantiateRx.contractId;
@@ -76,7 +76,7 @@ const fromHexString = hexString => new Uint8Array(hexString.match(/.{1,2}/g).map
 
 async function testContract() {
 	const bytecodeFileId = "0.0.34819104";
-	const contractId = "0.0.34819105";
+	const contractId = "0.0.34822145"; //"0.0.34819105";
 	console.log(`- The smart contract bytecode file ID is ${bytecodeFileId}`);
 	console.log(`- The smart contract ID is: ${contractId} \n`);
 	//console.log(`- The smart contract ID in Solidity format is: ${contractAddress} \n`);
