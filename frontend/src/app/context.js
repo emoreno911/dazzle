@@ -10,7 +10,8 @@ import {
 	associateToken,
 	validateClaim,
 	executeClaim,
-	setDeposit
+	setDeposit,
+	generateNewWallet
 } from '../utils/api';
 import { Hbar } from '@hashgraph/sdk';
 
@@ -124,28 +125,46 @@ const DataContextProvider = (props) => {
 		return result;
 	}
 
-	async function makeClaim(tokenId, data) {
+	async function makeClaim(tokenId, data, isNewWallet = false) {
+		let beneficiary = accountInfo.account;
+		let newWallet = null;
+
+		if (isNewWallet) {
+			newWallet = await generateNewWallet(tokenId);
+			
+			if (newWallet.result !== 'SUCCESS')
+				return newWallet
+
+			beneficiary = newWallet.data.accountId;
+		}
+
 		// if not HBAR and is user's wallet ask to asociate token first
 		if (tokenId === "0") {
 			let result = await executeClaim({
 				id: validatedData.id,
 				pwd: validatedData.pwd,
-				beneficiary: accountInfo.account
+				beneficiary,
 			});
 			console.log('Claim HBAR', result);
-			return result;
+			return {
+				newWallet, 
+				...result
+			};
 		}
 		else {
 			let result = await executeClaimToken({
-				tokenId,
+				beneficiary,
+				tokenId: data.tokenId,
 				id: validatedData.id,
 				pwd: validatedData.pwd,
-				beneficiary: accountInfo.account,
-				amount: data.amount,
-				isFungible: data.isFungible
+				amount: data.amount, // control this in contract
+				isFungible: data.isFungible === "0"? false : true
 			})
 			console.log('Claim Token', result);
-			return result;
+			return {
+				newWallet, 
+				...result
+			};
 		}
 	}
 

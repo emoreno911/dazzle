@@ -4,7 +4,7 @@ const Footer = () => {
 			<div className="max-w-5xl mx-auto pb-10 pt-10 text-gray-900">
 				<ul>
 						<li className="inline-block"><a className="block font-semibold px-3 h-12" href="/">Home</a></li>
-						<li className="inline-block"><a className="block font-semibold px-3 h-12" href="/faq">Claim</a></li>
+						<li className="inline-block"><a className="block font-semibold px-3 h-12" href="/#/claim">Claim</a></li>
 				</ul>
 				<div className="sm:flex px-3">
 						<div className="w-full sm:w-1/2">

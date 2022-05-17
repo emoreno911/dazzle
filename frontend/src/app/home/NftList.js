@@ -23,7 +23,7 @@ const NftItem = ({ nft, accountTokens }) => {
     }
 
     const name = _metadata.hasOwnProperty('name') ? _metadata.name : "";
-    const image = _metadata.hasOwnProperty('image') ? _metadata.image : "/img/no-image.png";
+    const image = _metadata.hasOwnProperty('image') ? _metadata.image : "https://res.cloudinary.com/dy3hbcg2h/image/upload/v1652749173/no-image_qrq0kt.png";
     const alt = _metadata.hasOwnProperty('image') ? tokenName : "no-image";
     return (
         <div className="flex items-center mx-2 my-2 rounded-lg">

@@ -2,6 +2,7 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const { 
     associateToken,
+    generateNewWallet,
     requestAccountInfo,
     executeCreateDeposit,
     callValidateClaim,
@@ -47,6 +48,12 @@ router.post('/executeClaimToken', async (request, response) => {
 	const { id, pwd, beneficiary, tokenId, amount, isFungible } = request.body;
     const result = 
         await executeClaimToken(id, pwd, tokenId, amount, isFungible, beneficiary);
+    response.json(result);
+});
+
+router.post('/generateNewWallet', async (request, response) => {
+    const { tokenId } = request.body;
+    const result = await generateNewWallet(tokenId);
     response.json(result);
 });
 

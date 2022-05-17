@@ -134,3 +134,15 @@ export async function executeClaimToken(data) {
 
     return response;
 }
+
+export async function generateNewWallet() {
+    const response = await request({
+        _baseURL: backendBaseURL,
+        url: `/generateNewWallet`,
+        method: 'POST',
+        fname: 'generateNewWallet',
+        data: {},
+    });
+
+    return response;
+}

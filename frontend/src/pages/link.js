@@ -10,7 +10,7 @@ import {
 }  from 'react-share'
 import Layout from "../app/layout"
 
-const baseLinkUrl = (window.location.hostname === 'localhost') ? 'http://localhost:3000/#/claim/' : 'https://testnet.dazzle.xyz/#/claim/';
+const baseLinkUrl = (window.location.hostname === 'localhost') ? 'http://localhost:3000/#/claim/' : window.location.origin+'/#/claim/';
 
 function Link() {
     const params = useParams();

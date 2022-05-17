@@ -62,7 +62,7 @@ const ModalSendNft = ({ nft, tokenName, tokenSymbol, image }) => {
                     className="flex text-sm p-2 bg-yellow-400 text-white rounded-md hover:bg-yellow-500 focus:outline-none"
                     onClick={() => setShow(true)}
                 >
-                    <img src="./img/dz-logo-black.png" alt="logo" className="dz-button"/>
+                    <img src="https://res.cloudinary.com/dy3hbcg2h/image/upload/v1652749176/dz-logo-black_oanfaf.png" alt="logo" className="dz-button"/>
                 </button>
 			)}
 		>

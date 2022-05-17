@@ -1,6 +1,6 @@
 export const contractId = "0.0.34822145";
 export const currentNetwork = "testnet";
-export const backendBaseURL = "http://localhost:5000";
+export const backendBaseURL = (window.location.hostname === 'localhost') ? "http://localhost:5000" : "https://dazzle-api.vercel.app";
 export const hederaBaseAPI = "https://testnet.mirrornode.hedera.com";
 
 export const appMetadata = {

@@ -36,7 +36,7 @@ function NftLayout({ tokenId, tokenData }) {
     }
 
     const name = _metadata.hasOwnProperty('name') ? _metadata.name : "";
-    const image = _metadata.hasOwnProperty('image') ? _metadata.image : "/img/no-image.png";
+    const image = _metadata.hasOwnProperty('image') ? _metadata.image : "https://res.cloudinary.com/dy3hbcg2h/image/upload/v1652749173/no-image_qrq0kt.png";
     const alt = _metadata.hasOwnProperty('image') ? token_id : "no-image";
 
     return (
@@ -60,9 +60,12 @@ function NftLayout({ tokenId, tokenData }) {
 
 
 function ShowItem({ item }) {
+    
     const [tokenData, setTokenData] = useState({ symbol: 'HBAR' });
     const {tokenId, amount, sender, isFungible, isClaimed} = item;
-    const wasClaimed = isClaimed !== "0";
+
+    const [disableClaim, setDisableClaim] = useState(false);
+    const [wasClaimed, setWasClaimed] = useState(isClaimed !== "0");
     const claimedText = wasClaimed ? "was already Claimed" : "is available for Claim";
     const tId = tokenId.indexOf('#') !== -1 ? tokenId.split('#')[0] : tokenId;
     
@@ -94,8 +97,20 @@ function ShowItem({ item }) {
                 {
                     !wasClaimed && (
                         <>
-                            <ModalPairWalletClaim buttonText={"Connect Wallet and Claim"} tokenId={tId} item={item} />
-                            <ModalCreateWalletClaim buttonText={"Create Wallet and Claim"} tokenId={tId} item={item} />
+                            <ModalPairWalletClaim 
+                                buttonText={"Connect Wallet and Claim"} 
+                                tokenId={tId} 
+                                item={item}
+                                disableClaim={disableClaim}
+                                setDisableClaim={setDisableClaim}
+                            />
+                            <ModalCreateWalletClaim 
+                                buttonText={"Create Wallet and Claim"} 
+                                tokenId={tId} 
+                                item={item} 
+                                disableClaim={disableClaim}
+                                setDisableClaim={setDisableClaim}
+                            />
                         </>
                     )
                 }

@@ -6,6 +6,7 @@ const {
     AccountInfoQuery,
     ContractCallQuery,
 	TransferTransaction,
+	AccountCreateTransaction,
 	TokenAssociateTransaction,
 	ContractExecuteTransaction,
     ContractFunctionParameters 
@@ -142,7 +143,7 @@ async function executeClaim(id, pwd, beneficiary) {
 }
 
 async function executeClaimToken(id, pwd, tokenId, amount, isFungible, beneficiary) {
-	let claimStatusCheck = await changeClaimStatus(id, pwd, false);
+	let claimStatusCheck = await changeClaimStatus(id, pwd, true);
 	
 	if (claimStatusCheck.result !== 'SUCCESS')
 		return claimStatusCheck;
@@ -186,8 +187,10 @@ async function executeTokenTransfer(tokenId, amount, isFungible, beneficiary) {
             .freezeWith(client);
 	}
 	else {
+		// for nfts tokenId comes like 0.0.3434345#${serial}
+		const [_tokenId, serialNumber] = tokenId.split('#');
 		transaction = await new TransferTransaction()
-			.addNftTransfer(tokenId, serialNumber, contractId, beneficiary)
+			.addNftTransfer(_tokenId, serialNumber, contractId, beneficiary)
 			.freezeWith(client);
 	}
 
@@ -214,6 +217,35 @@ async function executeTokenTransfer(tokenId, amount, isFungible, beneficiary) {
 	}
 }
 
+async function generateNewWallet(tokenId) {
+	const client = setClient();
+	const newKey = PrivateKey.generate();
+
+	try {
+		const response = await new AccountCreateTransaction()
+			.setKey(newKey.publicKey)
+			//.setInitialBalance(new Hbar(1)) 
+			.setMaxAutomaticTokenAssociations(3)
+			.execute(client);
+
+		const receipt = await response.getReceipt(client);
+		console.log(`account id = ${receipt.accountId}`);
+
+		return {
+			result: 'SUCCESS',
+			data: {
+				privateKey: newKey.toStringRaw(),
+				publicKey: newKey.publicKey.toString(),
+				accountId: receipt.accountId.toString()
+			}
+		}
+	} catch (error) {
+		return {
+			result: 'FAIL',
+		}
+	}
+}
+
 
 module.exports = {
 	associateToken,
@@ -222,4 +254,5 @@ module.exports = {
     callValidateClaim,
 	executeClaimToken,
     executeClaim,
+	generateNewWallet
 }

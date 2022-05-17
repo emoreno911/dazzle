@@ -9,7 +9,7 @@ const Header = () => {
 
 				<div className="px-2 w-full overflow-hidden md:w-1/6 lg:w-1/3 xl:w-1/3 text-center md:text-left flex-grow">
                     <h1 className="font-bold text-2xl header-title page-title">
-                        <img src="./img/dz-logo.png" alt="logo" className="dz-logo"/>
+                        <img src="https://res.cloudinary.com/dy3hbcg2h/image/upload/v1652749176/dz-logo_cas2p2.png" alt="logo" className="dz-logo"/>
                         <Link to="/">
                             Dazzle Protocol
                         </Link>

@@ -5,7 +5,7 @@ import {
 import Modal from "../common/Modal";
 import { DataContext } from "../context";
 
-const ModalPairWalletClaim = ({ buttonText, tokenId, item }) => {
+const ModalPairWalletClaim = ({ buttonText, tokenId, item, disableClaim, setDisableClaim }) => {
 	const { 
 		data:{status, accountInfo, pairingString, signer},
 		fn:{initHashconnectService, showWalletPopup, makeClaim}		 
@@ -23,10 +23,14 @@ const ModalPairWalletClaim = ({ buttonText, tokenId, item }) => {
     }
 
 	const handleClaimTokens = async () => {
+		if (disableClaim)
+			return;
+
 		if (tokenId === "0") {
 			let res = await makeClaim(tokenId, item);
 			if (res.result === 'SUCCESS') {
 				setClaimComplete(true)
+				setDisableClaim(true)
 			}
 		}
 		else {
@@ -42,6 +46,7 @@ const ModalPairWalletClaim = ({ buttonText, tokenId, item }) => {
 			let res2 = await makeClaim(tokenId, item);
 			if (res2.result === 'SUCCESS') {
 				setClaimComplete(true)
+				setDisableClaim(true)
 			}
 		}
 		
