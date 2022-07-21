@@ -1,16 +1,15 @@
-import React, { useState, useContext } from "react"
-import { useParams } from "react-router-dom"
-import { 
-    EmailShareButton, 
-    TelegramShareButton, 
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
+import {
+    EmailShareButton,
+    TelegramShareButton,
     WhatsappShareButton,
     EmailIcon,
     TelegramIcon,
-    WhatsappIcon, 
-}  from 'react-share'
-import Layout from "../app/layout"
+    WhatsappIcon,
+} from 'react-share';
 
-const baseLinkUrl = (window.location.hostname === 'localhost') ? 'http://localhost:3000/#/claim/' : window.location.origin+'/#/claim/';
+const baseLinkUrl = window.location.origin + '/#/claim/';
 
 function Link() {
     const params = useParams();
@@ -28,20 +27,20 @@ function Link() {
     }
 
     return (
-        <Layout>	
+        <>
             <div className="flex flex-col text-white text-center link-page">
                 <h3 className="text-xl font-bold">Here is your Link with Crypto!</h3>
                 <div className="my-10">
                     <div className="flex flex-wrap items-stretch w-full max-w-xl mx-auto relative">
-                        <input 
+                        <input
                             type="text"
                             defaultValue={linkResult}
-                            className="flex-shrink flex-grow flex-auto leading-normal w-px flex-1 h-10 rounded-lg rounded-r-none px-3 relative bg-color-dark text-white" 
+                            className="flex-shrink flex-grow flex-auto leading-normal w-px flex-1 h-10 rounded-lg rounded-r-none px-3 relative bg-color-dark text-white"
                         />
-                        
+
                         <div className="flex">
-                            <button 
-                                title="Copy Link" 
+                            <button
+                                title="Copy Link"
                                 onClick={() => handleCopyToClipboard()}
                                 className="flex items-center leading-normal rounded-l-none px-3 whitespace-no-wrap text-sm w-16 h-10 justify-center items-center text-md font-bold rounded-lg bg-color-alt text-gray-100"
                             >
@@ -52,9 +51,8 @@ function Link() {
                         </div>
                     </div>
 
-                    { linkCopied && <small className="text-yellow-500 ml-2 mt-2">Link Copied</small> }
+                    {linkCopied && <small className="text-yellow-500 ml-2 mt-2">Link Copied</small>}
                 </div>
-                
 
                 <h3 className="text-xl font-bold">Send this link to a Friend</h3>
                 <div className="my-10 mx-auto flex">
@@ -85,8 +83,8 @@ function Link() {
                     </EmailShareButton>
                 </div>
             </div>
-        </Layout>
-	)
+        </>
+    )
 }
 
 export default Link;

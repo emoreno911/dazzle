@@ -1,12 +1,12 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import Modal from "../common/Modal";
-import { DataContext } from "../context";
+import { useHedera } from "../../context/hedera"; 
 
-const ModalPairWalletHome = ({ buttonText }) => {
+const ModalPairWallet = ({}) => {
 	const { 
 		data:{status, accountInfo, pairingString},
 		fn:{initHashconnectService, clearPairings}		 
-	} = useContext(DataContext);
+	} = useHedera();
 
 	const [isTextCopied, setIsTextCopied] = useState(false);
 
@@ -22,14 +22,18 @@ const ModalPairWalletHome = ({ buttonText }) => {
 		<Modal
 			activator={({ setShow }) => (
 				<button 
-                    type="button" 
-                    className="flex text-lg px-5 py-2 my-5 text-white rounded-md bg-yellow-500 focus:outline-none"
-                    onClick={() => setShow(true)}
-                >
-                    <div>
-                        <span className="block text-lg">{ buttonText }</span>
-                    </div>
-                </button>
+					type="button" 
+					className="flex text-sm px-5 py-2 text-white rounded-md bg-color-alt focus:outline-none"
+					onClick={() => setShow(true)}
+				>
+					<div>
+						{
+							status === "Paired" ?
+							<span className="block text-md">Acc: {accountInfo.account}</span> :
+							<span className="block text-md">Pair Wallet</span>
+						}
+					</div>
+				</button>
 			)}
 		>
 			<div className="bg-color-accent pt-4 pb-8 px-8 rounded-md text-white">
@@ -91,4 +95,4 @@ const ModalPairWalletHome = ({ buttonText }) => {
 	)
 }
 
-export default ModalPairWalletHome
+export default ModalPairWallet

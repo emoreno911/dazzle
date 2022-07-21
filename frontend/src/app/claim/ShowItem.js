@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getTokenInfo, getNftInfo } from '../../utils/api';
-import {toFixedIfNecessary} from '../../utils/utilities';
+import { getTokenInfo, getNftInfo } from '../../utils/hedera/api';
+import {toFixedIfNecessary} from '../../utils';
 import ModalPairWalletClaim from './ModalPairWalletClaim';
 import ModalCreateWalletClaim from './ModalCreateWalletClaim';
 

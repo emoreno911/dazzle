@@ -1,29 +1,7 @@
-import axios from "axios";
-import {  backendBaseURL, hederaBaseAPI } from "./utilities";
+import { request } from "../index";
 
-const headers = {
-    'Cache-Control': 'no-cache',
-    'Pragma': 'no-cache',
-    'Expires': '0',
-}
-
-export const request = async ({url, fname, method = 'GET', data = null, _baseURL = null}) => {
-	const instance = axios.create();
-	const baseURL = _baseURL || backendBaseURL;
-	return instance.request({
-		baseURL,
-		url,
-		method,
-		data
-	})
-	.then(response => response.data)
-	.catch(err => {
-		const { message, response:{data, status} } = err;
-		console.log(`request error in %c ${fname}`, 'font-weight:900');
-		console.log(message);
-		return { err: true, errmsg: message, ...data };
-	})
-}
+const backendBaseURL = "https://dazzle-api.vercel.app"; //(window.location.hostname === 'localhost') ? "http://localhost:5000" : "https://dazzle-api.vercel.app";
+const hederaBaseAPI = "https://testnet.mirrornode.hedera.com";
 
 export async function getAccountInfo(accountId) {
     const response = await request({

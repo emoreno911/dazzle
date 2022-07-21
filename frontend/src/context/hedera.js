@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react'
+import React, { createContext, useState, useEffect, useContext } from 'react'
 import { currentNetwork, HashconnectService } from '../utils/hedera/service';
 import {
 	executeClaimToken,
@@ -13,7 +13,8 @@ import {
 } from '../utils/hedera/api';
 import { Hbar } from '@hashgraph/sdk';
 
-export const DataContext = createContext();
+const DataContext = createContext();
+export const useHedera = () => useContext(DataContext);
 
 let popupObjectReference = null;
 function openRequestedPopup(url, windowName, features = "popup") {
@@ -33,6 +34,7 @@ const logmessage = (msg) => {
 		console.log(msg)
 }
 
+
 const DataContextProvider = (props) => {
 	const [validatedData, setValidatedData] = useState({});
 	const [accountTokens, setAccountTokens] = useState([]);
@@ -47,6 +49,7 @@ const DataContextProvider = (props) => {
 	useEffect(() => {
 		setWalletService(new HashconnectService());
 		showWalletPopup();
+		console.log("Hedera context")
 	}, [])
 
 	async function initHashconnectService() {
@@ -84,8 +87,7 @@ const DataContextProvider = (props) => {
 		const _accountTokens = _accountInfo.balance.tokens.map(t => getTokenInfo(t.token_id))
 		Promise.all(_accountTokens).then(result => {
 			setAccountTokens(result)
-		})
-		
+		})	
 	}
 
 	async function makeDeposit(data) {

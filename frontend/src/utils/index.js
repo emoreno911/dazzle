@@ -1,7 +1,22 @@
-export const contractId = "0.0.34822145";
-export const currentNetwork = "testnet";
-export const backendBaseURL = (window.location.hostname === 'localhost') ? "http://localhost:5000" : "https://dazzle-api.vercel.app";
-export const hederaBaseAPI = "https://testnet.mirrornode.hedera.com";
+import axios from "axios";
+
+export const request = async ({url, fname, method = 'GET', data = null, _baseURL = null}) => {
+	const instance = axios.create();
+	const baseURL = _baseURL;
+	return instance.request({
+		baseURL,
+		url,
+		method,
+		data
+	})
+	.then(response => response.data)
+	.catch(err => {
+		const { message, response:{data, status} } = err;
+		console.log(`request error in %c ${fname}`, 'font-weight:900');
+		console.log(message);
+		return { err: true, errmsg: message, ...data };
+	})
+}
 
 export const appMetadata = {
 	name: "Dazzle Protocol",

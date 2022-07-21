@@ -15,7 +15,7 @@ function EmptyPage() {
     }
 
     return (
-      <Layout>
+      <>
         <div className="flex flex-col text-white text-center link-page">
           <h3 className="text-xl font-bold">Do you have a claim ID to submit?</h3>
           <div className="my-10">
@@ -40,7 +40,7 @@ function EmptyPage() {
           </div>
           {/* <h3 className="text-xl font-bold">Search for your items here!</h3> */}
         </div>
-      </Layout>
+      </>
     );
 }
 

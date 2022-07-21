@@ -1,7 +1,8 @@
+import { Outlet } from 'react-router-dom'
 import Footer from "./Footer"
 import Header from "./Header"
 
-const Layout = ({ children }) => (
+const Layout = () => (
     <>
     <Header />
     <main className="max-w-5xl mx-auto py-6 md:py-2">
@@ -9,9 +10,7 @@ const Layout = ({ children }) => (
             <div className="w-full flex flex-wrap overflow-hidden">
                 <div className="w-full overflow-hidden">
                     <div className="max-w-screen-lg mx-auto p-4">
-                        {
-                            children
-                        }
+                        <Outlet />
                     </div>
                 </div>
             </div>

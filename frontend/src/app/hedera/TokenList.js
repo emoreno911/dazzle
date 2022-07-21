@@ -1,5 +1,5 @@
 import ModalSendToken from './ModalSendToken';
-import { toFixedIfNecessary } from '../../utils/utilities';
+import { toFixedIfNecessary } from '../../utils';
 
 const TokenItem = ({ symbol, balance, tokenId, type, name }) => {
 	if (type === 'NON_FUNGIBLE_UNIQUE')

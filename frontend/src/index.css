@@ -1,6 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Maven+Pro:wght@600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
+/**
+bg: #1c1c28
+ft: #171722
+bg-hedera: #1f1f1f
+ft-hedera: #161616
+bg-tron: #250d0d
+ft-tron: #190101
+**/
+
+
 html,
 body {
   background-color: #1c1c28;
@@ -24,6 +34,31 @@ body {
   /* background-image: radial-gradient(currentColor 1px, transparent 1px),radial-gradient(currentColor 1px, transparent 1px);
   background-size: calc(20 * 1px) calc(20 * 1px);
   background-position: 0 0,calc(10 * 1px) calc(10 * 1px); */
+}
+.badge-trx {
+  background-color: #ff060a;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.badge-hbar {
+  background-color: #000;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.box-home {
+  box-shadow: inset 0px 0px 0px 0px #fff;
+  background-color: transparent;
+  transition: all .4s ease;
+}
+.box-home:hover {
+  box-shadow: inset 0px 0px 0px 2px #fff;
+  background: rgba(255,255,255,.05);
 }
 
 .dz-logo {

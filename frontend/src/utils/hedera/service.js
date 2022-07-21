@@ -4,7 +4,10 @@ import {
     TransferTransaction,
 } from '@hashgraph/sdk';
 import { SigningService } from './signing';
-import { appMetadata, contractId } from './utilities';
+import { appMetadata } from '../index';
+
+const contractId = "0.0.34822145";
+export const currentNetwork = "testnet";
 
 export class HashconnectService {
 

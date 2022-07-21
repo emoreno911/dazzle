@@ -1,37 +1,35 @@
 import { useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Modal from "../common/Modal"
-import { DataContext } from "../context";
-import { makeHash, toNumber } from "../../utils/utilities";
+//import { useHedera } from "../../context/hedera"; 
+import { makeHash, toNumber } from "../../utils";
 
-const ModalSendNft = ({ nft, tokenName, tokenSymbol, image }) => {
+const TokenModal = ({ symbol, tokenId, tokenType }) => {
     let navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState("");
     const [isProcessing, setIsProcessing] = useState(false);
-    const { 
+    /*const { 
         data:{ accountInfo },
 		fn:{ makeDeposit }		 
-	} = useContext(DataContext);
-    
-    const { token_id, metadata, serial_number } = nft;
+	} = useHedera();*/
+
+    const amountInput = useRef();
     const passwordInput = useRef();
 
-    const submit = async () => {
+    /*const submit = async () => {
         if (isProcessing)
             return;
 
-        const amount = 1;
-        const isFungible = false;
+        const amount = toNumber(amountInput.current.value);
         const pwd = passwordInput.current.value;
         const hash = await makeHash(pwd);
+        const isFungible = tokenType === 'FUNGIBLE_COMMON';
         setIsProcessing(true);
         setErrorMessage("");
 
         let response = await makeDeposit({
             sender: accountInfo.account,
-            tokenIdSerial: `${token_id}#${serial_number}`,
-            serialNumber: serial_number,
-            tokenId: token_id,
+            tokenId,
             isFungible,
             amount,
             hash
@@ -50,8 +48,11 @@ const ModalSendNft = ({ nft, tokenName, tokenSymbol, image }) => {
         }
 
         setIsProcessing(false);
+        amountInput.current.value = 1;
         passwordInput.current.value = "";
-    }
+    }*/
+
+    const submit = () => {}
 
 	return (
 		<Modal
@@ -67,18 +68,16 @@ const ModalSendNft = ({ nft, tokenName, tokenSymbol, image }) => {
 			)}
 		>
 			<div className="bg-color-accent pt-4 pb-8 px-8 rounded-md text-white">
-				<h4 className=" text-lg mb-6">SEND NFT</h4>
-                <div className="flex">
-                    <div className="">
-                        <img className="modalpic rounded-lg mr-5" src={image} alt={""} />
-                    </div>
-                    <div className="w-2/3 sm:w-4/5">
-                        <div className="mb-2">Token Symbol: <span className="text-gray-400">{tokenSymbol} ({token_id})</span></div>
-                        <div className="mb-2">Token Name: <span className="text-gray-400">{tokenName}</span></div>
-                        <div className="mb-2">Serial: <span className="text-gray-400">{serial_number}</span></div>
-                        <div>Metadata</div>
-                        <pre className="overflow-hidden text-gray-400">{metadata}</pre>
-                    </div>                    
+				<h4 className=" text-lg mb-6">SEND TOKENS</h4>
+                <label className="block mb-5">How much you want to send?</label>
+                <div className="text-center">
+                    <input 
+                        ref={amountInput}
+                        type="number" 
+                        defaultValue={1} 
+                        className="bg-transparent text-white text-6xl text-center block border-b-2 w-1/2 mx-auto mb-3 focus:outline-none focus:border-yellow-500" 
+                    />
+                    <span className="text-white text-3xl">{symbol}</span>
                 </div>
 				<div className="w-full relative my-5">
                     <label className="text-white">Set a Password (Optional)</label>
@@ -96,7 +95,7 @@ const ModalSendNft = ({ nft, tokenName, tokenSymbol, image }) => {
                         onClick={() => submit()}
                     >
                         <div>
-                            <span className="block text-md">SEND</span>
+                            <span className="block text-md">{ isProcessing ? "Processing..." : "Send" }</span>
                         </div>
                     </button>
                 </div>
@@ -105,4 +104,4 @@ const ModalSendNft = ({ nft, tokenName, tokenSymbol, image }) => {
 	)
 }
 
-export default ModalSendNft
+export default TokenModal

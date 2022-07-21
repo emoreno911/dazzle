@@ -35,7 +35,7 @@ function ClaimPage({ depositId }) {
     }
 
     return (
-        <Layout>
+        <>
             {
                 isValidated ?
                     <ShowItem item={item} /> :
@@ -44,7 +44,7 @@ function ClaimPage({ depositId }) {
                         submitValidation={submitValidation} 
                     />
             }
-        </Layout>
+        </>
     );
 }
 
