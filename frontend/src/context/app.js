@@ -5,10 +5,19 @@ export const useApp = () => useContext(DataContext);
 
 const DataContextProvider = (props) => {
 	const [status, setStatus] = useState('not connected');
+	const [account, setAccount] = useState({});
 
 	useEffect(() => {
 		console.log("App context,", status)
 	}, [])
+
+	const setConnectedAccount = (address, network, status) => {
+		setStatus(status);
+		setAccount({
+			network,
+			address
+		})
+	}
 
 
 	const isMobile = () => {
@@ -16,12 +25,13 @@ const DataContextProvider = (props) => {
 	}
 
 	const data = {
-		status
+		status,
+		account
 	}
 
 	const fn = {
 		isMobile,
-        setStatus
+        setConnectedAccount
 	}
 
 	return (

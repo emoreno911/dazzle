@@ -1,4 +1,5 @@
-import TokenModal from './TokenModal';
+//import TokenModal from './TokenModal';
+import TokenModalTron from "./TokenModalTron";
 
 const TokenItem = ({ symbol, balance, tokenId, type, name }) => {
     if (type === 'NON_FUNGIBLE_UNIQUE')
@@ -16,7 +17,7 @@ const TokenItem = ({ symbol, balance, tokenId, type, name }) => {
                 </span>
             </div>
             <div>
-                <TokenModal
+                <TokenModalTron
                     symbol={symbol}
                     tokenId={tokenId}
                     tokenType={type}

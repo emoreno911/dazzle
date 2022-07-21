@@ -1,58 +1,15 @@
-import { useState, useRef, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import Modal from "../common/Modal"
-//import { useHedera } from "../../context/hedera"; 
-import { makeHash, toNumber } from "../../utils";
+import { useRef } from "react";
+import Modal from "./Modal";
 
-const TokenModal = ({ symbol, tokenId, tokenType }) => {
-    let navigate = useNavigate();
-    const [errorMessage, setErrorMessage] = useState("");
-    const [isProcessing, setIsProcessing] = useState(false);
-    /*const { 
-        data:{ accountInfo },
-		fn:{ makeDeposit }		 
-	} = useHedera();*/
-
+const TokenModal = ({ symbol, onSubmit, errorMessage, isProcessing }) => {
     const amountInput = useRef();
     const passwordInput = useRef();
 
-    /*const submit = async () => {
-        if (isProcessing)
-            return;
-
-        const amount = toNumber(amountInput.current.value);
+    const submit = async () => {
+        const amount = amountInput.current.value;
         const pwd = passwordInput.current.value;
-        const hash = await makeHash(pwd);
-        const isFungible = tokenType === 'FUNGIBLE_COMMON';
-        setIsProcessing(true);
-        setErrorMessage("");
-
-        let response = await makeDeposit({
-            sender: accountInfo.account,
-            tokenId,
-            isFungible,
-            amount,
-            hash
-        });
-
-        if (response.hasOwnProperty('result')) {
-            if (response.result === "SUCCESS") {
-                navigate(`/link/${response.depositId}`, { replace: true });
-            }
-            else {
-                setErrorMessage("Something went wrong! Try again.");
-            }
-        }
-        else {
-            setErrorMessage("Something went wrong! Try again.");
-        }
-
-        setIsProcessing(false);
-        amountInput.current.value = 1;
-        passwordInput.current.value = "";
-    }*/
-
-    const submit = () => {}
+        onSubmit(amount, pwd);
+    }
 
 	return (
 		<Modal

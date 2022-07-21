@@ -1,59 +1,24 @@
-import { useState, useRef, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import Modal from "../common/Modal"
-//import { useHedera } from "../../context/hedera"; 
-//import { makeHash, toNumber } from "../../utils";
+import { useRef } from "react";
+import Modal from "./Modal"
 
-const NftModal = ({ nft, tokenName, tokenSymbol, image }) => {
-    let navigate = useNavigate();
-    const [errorMessage, setErrorMessage] = useState("");
-    const [isProcessing, setIsProcessing] = useState(false);
-    /*const { 
-        data:{ accountInfo },
-		fn:{ makeDeposit }		 
-	} = useHedera();*/
-    
-    const { tokenId, metadata, tokenUri } = nft;
+const NftModal = ({ 
+    image,
+    tokenId, 
+    tokenName,
+    metadata, 
+    tokenSymbol, 
+    errorMessage,
+    isProcessing,
+    onSubmit
+}) => {
+    const tokenIdTitle = "Token ID";
+    const metadataTitle = "Token URI";
     const passwordInput = useRef();
 
-    /*const submit = async () => {
-        if (isProcessing)
-            return;
-
-        const amount = 1;
-        const isFungible = false;
+    const submit = () => {
         const pwd = passwordInput.current.value;
-        const hash = await makeHash(pwd);
-        setIsProcessing(true);
-        setErrorMessage("");
-
-        let response = await makeDeposit({
-            sender: accountInfo.account,
-            tokenIdSerial: `${token_id}#${serial_number}`,
-            serialNumber: serial_number,
-            tokenId: token_id,
-            isFungible,
-            amount,
-            hash
-        });
-
-        if (response.hasOwnProperty('result')) {
-            if (response.result === "SUCCESS") {
-                navigate(`/link/${response.depositId}`, { replace: true });
-            }
-            else {
-                setErrorMessage("Something went wrong! Try again.");
-            }
-        }
-        else {
-            setErrorMessage("Something went wrong! Try again.");
-        }
-
-        setIsProcessing(false);
-        passwordInput.current.value = "";
-    }*/
-
-    const submit = () => {}
+        onSubmit(pwd);
+    }
 
 	return (
 		<Modal
@@ -77,11 +42,11 @@ const NftModal = ({ nft, tokenName, tokenSymbol, image }) => {
                     <div className="w-2/3 sm:w-4/5">
                         <div className="mb-2">Token Symbol: <span className="text-gray-400">{tokenSymbol}</span></div>
                         <div className="mb-2">Token Name: <span className="text-gray-400">{tokenName}</span></div>
-                        <div className="mb-2">Token ID: <span className="text-gray-400">{tokenId}</span></div>
-                        <div>Token URI</div>
+                        <div className="mb-2">{tokenIdTitle}: <span className="text-gray-400">{tokenId}</span></div>
+                        <div>{metadataTitle}</div>
                         <code>
                             <pre className="codeblock">
-                                {tokenUri}
+                                {metadata}
                             </pre>
                         </code>
                     </div>                    
@@ -102,7 +67,7 @@ const NftModal = ({ nft, tokenName, tokenSymbol, image }) => {
                         onClick={() => submit()}
                     >
                         <div>
-                            <span className="block text-md">SEND</span>
+                            <span className="block text-md">{ isProcessing ? "Processing..." : "Send" }</span>
                         </div>
                     </button>
                 </div>

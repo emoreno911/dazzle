@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 //import ModalPairWallet from "../home/ModalPairWallet";
+import AccountButton from "../common/AccountButton";
 
 const Header = () => {
 	return (
@@ -29,7 +30,7 @@ const Header = () => {
 				</div>
 
 				<div className="my-2 px-2 w-full overflow-hidden md:w-2/6 lg:w-1/3 xl:w-1/3 text-center md:text-right hidden md:flex items-start justify-end">
-                    {/* <ModalPairWallet /> */}
+                    <AccountButton />
 				</div>
 			</div>
     </header>

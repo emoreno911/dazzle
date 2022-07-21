@@ -3,7 +3,7 @@ import Loader from "../common/Loader";
 
 const NftList = ({ accountNfts }) => {
     if (accountNfts === null)
-		return <Loader />;
+		return <Loader loaderMessage="Loading Assets..."/>;
 
     if (accountNfts.length === 0)
 		return (

@@ -1,4 +1,4 @@
-import NftModal from './NftModal';
+import NftModalTron from './NftModalTron';
 
 const NftItem = ({ nft }) => {
     const { 
@@ -33,7 +33,7 @@ const NftItem = ({ nft }) => {
                 </a>
             </div>
             <div className="p-2 pr-0">
-                <NftModal 
+                <NftModalTron 
                     nft={nft} 
                     tokenSymbol={tokenSymbol}
                     tokenName={tokenName} 
