@@ -1,13 +1,12 @@
-import React, { useState, useContext } from "react";
-import Modal from "../common/Modal";
-import { DataContext } from "../context";
+import React, { useState } from "react";
+import Modal from "../../common/Modal";
+import { useTron } from "../../../context/tron";
 
-// https://github.com/ed-marquez/hedera-sdk-js/blob/main/examples/create-account.js
 
 const ModalCreateWalletClaim = ({ buttonText, tokenId, item, disableClaim, setDisableClaim }) => {
 	const { 
 		fn:{ makeClaim }		 
-	} = useContext(DataContext);
+	} = useTron();
 
     const [isTextCopied, setIsTextCopied] = useState(false);
 	const [isProcessing, setIsProcessing] = useState(false);
@@ -22,9 +21,8 @@ const ModalCreateWalletClaim = ({ buttonText, tokenId, item, disableClaim, setDi
         let res = await makeClaim(tokenId, item, true);
         console.log(res)
         if (res.result === 'SUCCESS') {
-            
             setClaimComplete(true);
-            setNewWalletInfo(res.newWallet.data);
+            setNewWalletInfo(res.newWallet);
             setDisableClaim(true);
         }
 
@@ -38,6 +36,8 @@ const ModalCreateWalletClaim = ({ buttonText, tokenId, item, disableClaim, setDi
             setIsTextCopied(false);
         }, 2500);
     }
+
+    const newAddress = newWalletInfo.hasOwnProperty('address') ? newWalletInfo.address.base58 : "";
 
 	return (
 		<Modal
@@ -88,10 +88,10 @@ const ModalCreateWalletClaim = ({ buttonText, tokenId, item, disableClaim, setDi
                             <div className="text-center">
                                 <a 
                                     className="block text-md text-yellow-500"
-                                    href={`https://testnet.dragonglass.me/hedera/accounts/${newWalletInfo.accountId}`} 
+                                    href={`https://nile.tronscan.org/#/address/${newAddress}`} 
                                     target="_blank"
                                 >
-                                    Check in Hedera Explorer
+                                    Check in Tronscan
                                 </a>
                                 <small className="text-gray-400">Remember to store this info in a safe place</small>
                             </div>

@@ -1,19 +1,15 @@
-import React, { useContext, useState, useEffect } from "react";
-import Layout from "../layout";
-import ShowItem from "./ShowItem";
+import React, { useState, useEffect } from "react";
 import RequestPassword from './RequestPassword';
-import {DataContext} from '../context';
+import ShowItemHedera from "./hedera/ShowItem";
+import ShowItemTron from "./tron/ShowItem";
 
 
-function ClaimPage({ depositId }) {
+function ClaimPage({ depositId, makeValidate }) {
+    const isHederaNetwork = window.location.href.indexOf("/hedera/") !== -1;
+
     const [isValidated, setIsValidated] = useState(false);
     const [errorMessage, setErrorMessage] = useState("")
     const [item, setItem] = useState(null);
-
-    const { 
-        data:{ accountInfo },
-		fn:{ makeValidate }		 
-	} = useContext(DataContext);
 
     useEffect(() => {  
         setIsValidated(false)
@@ -34,18 +30,16 @@ function ClaimPage({ depositId }) {
         }
     }
 
-    return (
-        <>
-            {
-                isValidated ?
-                    <ShowItem item={item} /> :
-                    <RequestPassword
-                        errorMessage={errorMessage} 
-                        submitValidation={submitValidation} 
-                    />
-            }
-        </>
-    );
+    return !isValidated ?
+        <RequestPassword
+            errorMessage={errorMessage} 
+            submitValidation={submitValidation} 
+        /> : 
+        isHederaNetwork ?
+        <ShowItemHedera item={item} /> 
+        :
+        <ShowItemTron item={item} />
+
 }
 
 export default ClaimPage;

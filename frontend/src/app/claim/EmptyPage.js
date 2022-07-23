@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Layout from "../layout";
 
 
 function EmptyPage() {
@@ -11,7 +10,7 @@ function EmptyPage() {
         if (idInput.current.value === "")
             return;
 
-        navigate(`/claim/${idInput.current.value}`, { replace: true });
+        navigate(`${window.location.hash}/${idInput.current.value}`, { replace: true });
     }
 
     return (

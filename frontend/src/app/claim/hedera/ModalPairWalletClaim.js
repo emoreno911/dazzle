@@ -1,15 +1,15 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import {
 	TokenAssociateTransaction
 } from '@hashgraph/sdk';
-import Modal from "../common/Modal";
-import { DataContext } from "../context";
+import Modal from "../../common/Modal";
+import { useHedera } from "../../../context/hedera";
 
 const ModalPairWalletClaim = ({ buttonText, tokenId, item, disableClaim, setDisableClaim }) => {
 	const { 
 		data:{status, accountInfo, pairingString, signer},
 		fn:{initHashconnectService, showWalletPopup, makeClaim}		 
-	} = useContext(DataContext);
+	} = useHedera();
 
 	const [isTextCopied, setIsTextCopied] = useState(false);
 	const [claimComplete, setClaimComplete] = useState(false);

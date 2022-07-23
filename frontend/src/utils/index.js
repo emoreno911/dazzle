@@ -49,3 +49,8 @@ export const makeHash = async (string) => {
 		.join('');
 	return hashHex;
 }
+
+export const divideByDecimals = (num, decimals) => {
+	const divider = parseInt(`1${Array(decimals).fill(0).join('')}`);
+	return toFixedIfNecessary(num/divider, 8)
+}

@@ -48,7 +48,9 @@ const DataContextProvider = (props) => {
 
 	useEffect(() => {
 		setWalletService(new HashconnectService());
-		showWalletPopup();
+		if (window.location.hash === "#/hedera")
+			showWalletPopup();
+
 		console.log("Hedera context")
 	}, [])
 

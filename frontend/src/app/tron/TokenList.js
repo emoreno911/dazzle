@@ -1,6 +1,5 @@
 import TokenItem from "./TokenItem";
-import Loader from "../common/Loader";
-import { toFixedIfNecessary } from "../../utils";
+import { divideByDecimals, toFixedIfNecessary } from "../../utils";
 
 const TokenList = ({ accountTokens, accountInfo }) => {
 	if (Object.keys(accountInfo).length === 0)
@@ -24,13 +23,13 @@ const TokenList = ({ accountTokens, accountInfo }) => {
 			{
 				accountTokens.map(item => {
 					const { address, symbol, type, name, balance, decimals } = item;
-					const divider = parseInt(`1${Array(decimals).fill(0).join('')}`);
+					const _balance = divideByDecimals(balance, decimals);
 					
 					return (
 						<TokenItem
 							key={symbol}
 							symbol={symbol}
-							balance={toFixedIfNecessary(balance/divider, 8)}
+							balance={_balance}
 							tokenId={address}
 							name={name}
 							type={type}

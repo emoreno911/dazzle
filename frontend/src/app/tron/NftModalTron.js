@@ -27,8 +27,7 @@ const NftModalTron = ({ nft, tokenName, tokenSymbol, image }) => {
         let response = await makeDeposit({
             sender: accountInfo.address,
             isFungible: false,
-            tokenAddr,
-            tokenId,
+            tokenId: `${tokenAddr}#${tokenId}`,
             amount,
             hash
         });

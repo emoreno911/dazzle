@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
 import {
     EmailShareButton,
     TelegramShareButton,
@@ -9,12 +8,10 @@ import {
     WhatsappIcon,
 } from 'react-share';
 
-const baseLinkUrl = window.location.origin + '/#/claim/';
 
 function Link() {
-    const params = useParams();
     const [linkCopied, setLinkCopied] = useState(false);
-    const linkResult = `${baseLinkUrl}${params.depositId}`;
+    const linkResult = window.location.href.replace('link', 'claim');
     const title = "You got a magic link ";
     const iconSize = 48;
 

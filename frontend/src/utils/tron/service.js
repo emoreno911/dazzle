@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 let account = null
 let contractAddress = 'TKZRzE9ykVdU3YG4ehchYNH2PxMQv7GcoQ' 
 let dazzleContract = null
@@ -140,7 +142,28 @@ export async function getTokenInfo(contractAddr, holderAddr) {
     }
 }
 
-export async function getNftInfo(contractAddr, holderAddr, index) {
+export async function getNftInfo(contractAddr, tokenId) {
+    let contract = await window.tronWeb.contract().at(contractAddr);
+    try {
+        let name = await contract.name().call();
+        let symbol = await contract.symbol().call();
+        let tokenUri = await contract.tokenURI(tokenId).call();
+        let metadata = await (await fetch(tokenUri)).json();
+        return {
+            name,
+            symbol,
+            address: contractAddr,
+            tokenId: tokenId.toNumber(),
+            tokenUri,
+            metadata
+        }   
+    } catch (error) {
+        console.log("error getting nft",error);
+        return {};
+    }
+}
+
+export async function getNftInfoByOwnerIndex(contractAddr, holderAddr, index) {
     let contract = await window.tronWeb.contract().at(contractAddr);
     try {
         let tokenId = await contract.tokenOfOwnerByIndex(holderAddr, index).call();
@@ -148,7 +171,7 @@ export async function getNftInfo(contractAddr, holderAddr, index) {
         let metadata = await (await fetch(tokenUri)).json();
         return {
             address: contractAddr,
-            tokenId: tokenId.toNumber(),
+            tokenId: tokenId.toString(),
             tokenUri,
             metadata
         }   
@@ -172,7 +195,7 @@ export async function getAccountTokens(tokens, holderAddr) {
         })
         .flat();
 
-    const reqNftInfos = filterNfts.map(t => getNftInfo(t.address, holderAddr, t.index));
+    const reqNftInfos = filterNfts.map(t => getNftInfoByOwnerIndex(t.address, holderAddr, t.index));
     const nftInfos = await Promise.all(reqNftInfos);
 
     const accountNfts = nftInfos.map(t => {
@@ -189,4 +212,95 @@ export async function getAccountTokens(tokens, holderAddr) {
 export async function setLibraryContract() {
     // TODO: abtain contract Object
     dazzleContract = await window.tronWeb.contract().at(contractAddress);
+}
+
+// makeTransaction
+export async function makeTransaction(signer, amount, tokenId, serialNumber) {
+
+}
+
+// setDeposit
+export async function setDeposit(data) {
+    const {tokenId, hash, amount, sender, isFungible, tokenIdSerial} = data;
+
+    try {
+        const id = uuidv4();
+        const _tokenId = isFungible ? tokenId : tokenIdSerial;
+        const _amount = isFungible ? window.tronWeb.toSun(amount) : 1;
+
+        const result = await dazzleContract
+            .createDeposit(id, _tokenId, hash, _amount, sender, isFungible)
+            .send({
+                feeLimit: 100_000_000,
+                callValue: 0,
+                shouldPollResponse: true
+            });
+  
+        return {
+            depositId: id,
+            transactionId: "",
+            result: "SUCCESS",
+            err: false
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            depositId: 0,
+            transactionId: "",
+            result: "FAIL",
+            err: true
+        }
+    }
+}
+
+// validateClaim
+export async function validateClaim(data) {
+    const {id, pwd} = data;
+
+    try {
+        const result = await dazzleContract
+            .validateClaim(id, pwd)
+            .send({
+                feeLimit: 100_000_000,
+                callValue: 0,
+                shouldPollResponse: true
+            });
+  
+        return {
+            err: false,
+            result: "SUCCESS"
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            err: true,
+			result: "INVALID_ID_PASSWORD"
+        }
+    }
+}
+
+// executeClaim
+export async function executeClaim(data) {
+    const {id, pwd, beneficiary} = data;
+
+    try {
+        const result = await dazzleContract
+            .executeClaim(id, pwd, beneficiary)
+            .send({
+                feeLimit: 100_000_000,
+                callValue: 0,
+                shouldPollResponse: true
+            });
+  
+        return {
+            err: false,
+            result: "SUCCESS"
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            err: true,
+			result: "INVALID_ID_PASSWORD"
+        }
+    }
 }

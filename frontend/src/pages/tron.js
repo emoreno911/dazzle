@@ -1,17 +1,30 @@
+import { useState } from 'react';
 import HeroHome from '../app/common/HeroHome';
 import TokenList from "../app/tron/TokenList";
 import NftList from "../app/tron/NftList";
 import { useTron } from "../context/tron";
 
 const Tron = () => {
+	const [isConnecting, setIsConnecting] = useState(false);
 	const { 
         data: {
             accountTokens,
             accountInfo,
             accountNfts,
             status      
-        } 
+        },
+		fn: {
+			setWalletDetails
+		} 
     } = useTron();
+
+	const handleIsConnecting = () => {
+		setIsConnecting(true);
+        setWalletDetails();
+        setTimeout(() => {
+            setIsConnecting(false);
+        }, 5000);
+    }
 
 	return status === "connected" ?
 	(
@@ -36,10 +49,10 @@ const Tron = () => {
 				<button
 					type="button"
 					className="flex text-lg px-5 py-2 my-5 text-white rounded-md bg-yellow-500 focus:outline-none"
-					onClick={() => { }}
+					onClick={() => handleIsConnecting()}
 				>
 					<div>
-						<span className="block text-lg">{"Start Here!"}</span>
+						<span className="block text-lg">{isConnecting ? "Connecting Wallet..." : "Start Here!"}</span>
 					</div>
 				</button>
 			</div>
