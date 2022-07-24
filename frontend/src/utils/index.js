@@ -24,6 +24,10 @@ export const appMetadata = {
     icon: "https://res.cloudinary.com/dy3hbcg2h/image/upload/v1652131690/dz-logo-black_c86gzb.png"
 }
 
+export const delay = (ms) => {
+	return new Promise((resolve) => setTimeout(() => resolve(), ms))
+}
+
 export const formatNumber = (number) => {
 	return new Intl.NumberFormat().format(number)
 }
@@ -44,13 +48,41 @@ export const makeHash = async (string) => {
 	const utf8 = new TextEncoder().encode(string);
 	const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
 	const hashArray = Array.from(new Uint8Array(hashBuffer));
-	const hashHex = hashArray
+	/*const hashHex = hashArray
 		.map((bytes) => bytes.toString(16).padStart(2, '0'))
-		.join('');
-	return hashHex;
+		.join('');*/
+	return hashArray;
+}
+
+export const isNullAddress = (addr) => {
+	return addr === "0x0000000000000000000000000000000000000000" || addr === "410000000000000000000000000000000000000000"
 }
 
 export const divideByDecimals = (num, decimals) => {
 	const divider = parseInt(`1${Array(decimals).fill(0).join('')}`);
-	return toFixedIfNecessary(num/divider, 8)
+	return toFixedIfNecessary(num/divider, 8);
+}
+
+export const multiplyByDecimals = (num, decimals) => {
+	const multiplier = parseInt(`1${Array(decimals).fill(0).join('')}`);
+	return toFixedIfNecessary(num*multiplier, 8);
+}
+
+export const storeLocalDeposit = (depositId, amount, token, txid, network) => {
+	const storeName = "dazzle-deposits";
+	const obj = { depositId, amount, token, txid, network };
+	
+	let existing = localStorage.getItem(storeName);
+	let arr = existing === null ? [] : JSON.parse(existing);
+	arr.push(obj);
+	localStorage.setItem(storeName, JSON.stringify(arr));
+}
+
+window.listDeposits = () => {
+	const storeName = "dazzle-deposits";
+	let existing = localStorage.getItem(storeName);
+	let arr = JSON.parse(existing);
+	let view = arr.map((o,i) => `\n${i+1}) ${o.depositId} | ${o.token} | ${o.amount}`)
+	console.log(view.join(''))
+	return true
 }

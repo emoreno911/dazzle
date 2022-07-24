@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTron } from "../../context/tron"; 
-import { makeHash, toNumber } from "../../utils";
+import { makeHash, multiplyByDecimals } from "../../utils";
 import TokenModal from "../common/TokenModal";
 
-const TokenModalTron = ({ symbol, tokenId, tokenType }) => {
+const TokenModalTron = ({ symbol, tokenId, tokenType, address, balance, decimals }) => {
     let navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState("");
     const [isProcessing, setIsProcessing] = useState(false);
@@ -17,16 +17,25 @@ const TokenModalTron = ({ symbol, tokenId, tokenType }) => {
         if (isProcessing)
             return;
 
+        if (parseInt(amount) > balance) {
+            setErrorMessage("Insufficient balance");
+            return;
+        }
+
         const isFungible = tokenType === 'FUNGIBLE_COMMON';
+        const category = symbol === 'TRX' ? 0 : 1;
         const hash = await makeHash(pwd);
         setIsProcessing(true);
         setErrorMessage("");
 
         let response = await makeDeposit({
+            symbol,
             sender: accountInfo.address,
-            amount: toNumber(amount),
+            amount: multiplyByDecimals(amount, decimals),
             isFungible,
-            tokenId,
+            category,
+            address,
+            tokenId,          
             hash
         });
 

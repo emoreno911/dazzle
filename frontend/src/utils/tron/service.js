@@ -1,8 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
+import {delay} from '../index'
 
-let account = null
-let contractAddress = 'TKZRzE9ykVdU3YG4ehchYNH2PxMQv7GcoQ' 
-let dazzleContract = null
+//const _tronWeb = window.tronWeb;
+let account = null;
+let dazzleAddress = 'TA3oLn5bVcAPYogzq1q8A6PKjarrko4VFh'; //'TTtsKYJHQnWzCdAyNcDW72F1HuTtkThKid' ;
+let dazzleContract = null;
 
 export const accountAddress = () => {
   return account
@@ -153,7 +155,7 @@ export async function getNftInfo(contractAddr, tokenId) {
             name,
             symbol,
             address: contractAddr,
-            tokenId: tokenId.toNumber(),
+            tokenId,
             tokenUri,
             metadata
         }   
@@ -211,29 +213,61 @@ export async function getAccountTokens(tokens, holderAddr) {
 
 export async function setLibraryContract() {
     // TODO: abtain contract Object
-    dazzleContract = await window.tronWeb.contract().at(contractAddress);
+    dazzleContract = await window.tronWeb.contract().at(dazzleAddress);
 }
 
 // makeTransaction
-export async function makeTransaction(signer, amount, tokenId, serialNumber) {
+export async function makeTransaction(data, accountInfo) {
+    const {tokenId, amount, category, address} = data;
+    let result;
 
+    try {
+        if (category === 0) {
+            const tx = await window.tronWeb.transactionBuilder.sendTrx(dazzleAddress, amount);
+            const signedTx = await window.tronWeb.trx.sign(tx);
+            const receipt = await window.tronWeb.trx.sendRawTransaction(signedTx);
+            result = { result: receipt.result ? "SUCCESS" : "FAIL", txid: receipt.txid };
+        }
+        else if (category === 1) {
+            const trc20 = await window.tronWeb.contract().at(address);
+            const tx = await trc20
+                .transfer(dazzleAddress, amount)
+                .send({
+                    feeLimit: 100_000_000
+                });
+            //const txInfo = await window.tronWeb.trx.getTransactionInfo(tx);
+            result = { result: "SUCCESS", txid: tx }
+        }
+        else if (category === 2) {
+            const trc721 = await window.tronWeb.contract().at(address);
+            const tx = await trc721
+                .transferFrom(accountInfo.address, dazzleAddress, tokenId)
+                .send({
+                    feeLimit: 100_000_000
+                });
+            //const txInfo = await window.tronWeb.trx.getUnconfirmedTransactionInfo(tx);
+            result = { result: "SUCCESS", txid: tx }
+        }        
+    } catch (error) {
+        console.log(error);
+        result = { result: "FAIL" };
+    }
+
+    console.log(result);
+    return result;
 }
 
 // setDeposit
 export async function setDeposit(data) {
-    const {tokenId, hash, amount, sender, isFungible, tokenIdSerial} = data;
+    const {tokenId, hash, amount, sender, isFungible, category, address,} = data;
 
     try {
         const id = uuidv4();
-        const _tokenId = isFungible ? tokenId : tokenIdSerial;
-        const _amount = isFungible ? window.tronWeb.toSun(amount) : 1;
-
         const result = await dazzleContract
-            .createDeposit(id, _tokenId, hash, _amount, sender, isFungible)
+            .createDeposit(id, tokenId, hash, amount, sender, isFungible, address, category)
             .send({
                 feeLimit: 100_000_000,
-                callValue: 0,
-                shouldPollResponse: true
+                //callValue: 0 // dapp fees?
             });
   
         return {
@@ -260,15 +294,11 @@ export async function validateClaim(data) {
     try {
         const result = await dazzleContract
             .validateClaim(id, pwd)
-            .send({
-                feeLimit: 100_000_000,
-                callValue: 0,
-                shouldPollResponse: true
-            });
+            .call();
   
         return {
             err: false,
-            result: "SUCCESS"
+            result
         }
     } catch (error) {
         console.log(error)
@@ -287,9 +317,7 @@ export async function executeClaim(data) {
         const result = await dazzleContract
             .executeClaim(id, pwd, beneficiary)
             .send({
-                feeLimit: 100_000_000,
-                callValue: 0,
-                shouldPollResponse: true
+                feeLimit: 100_000_000
             });
   
         return {

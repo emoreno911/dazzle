@@ -5,6 +5,7 @@ pragma solidity >=0.6.0 <0.9.0;
 import "./ITRC20.sol";
 import "./ITRC721.sol";
 
+// compile in https://nile.tronscan.org/#/contracts/contract-compiler with version 0.7.6
 contract DazzleProtocolV2 {
     ITRC20 _token20;
     ITRC721 _token721;
@@ -29,6 +30,10 @@ contract DazzleProtocolV2 {
         address contractAddr;
         Category category; 
     }
+    
+    address public owner;
+    
+    mapping(string => address) public smartWallets;  // socialid => wallet
 
     mapping(string => Deposit) public deposits;
 
@@ -39,6 +44,15 @@ contract DazzleProtocolV2 {
     event DepositClaimed(string id, address beneficiary);
 
     event TransferReceived(address indexed _from, uint _value);
+    
+    constructor() {
+        owner = msg.sender;
+    }
+    
+    modifier onlyOwner() {
+      require(msg.sender == owner);
+      _;
+    }
 
     receive() external payable {
         emit TransferReceived(msg.sender,msg.value);
@@ -47,8 +61,15 @@ contract DazzleProtocolV2 {
     function getBalance() public view returns (uint) {
         return address(this).balance;
     }
+    
+    function getSmartWallet(string memory socialid) public view returns (address) {
+        return smartWallets[socialid];
+    }
+    
+    function addSmartWallet(string memory socialid, address walletAddr) public onlyOwner {
+        smartWallets[socialid] = walletAddr;
+    }
 
-    /**  **/
     function createDeposit(
         string memory id,
         uint tokenId,
@@ -75,7 +96,7 @@ contract DazzleProtocolV2 {
         emit DepositCreated(id, contractAddr);
     }
 
-    function validateClaim(string memory id, string memory pwd) public view returns(string memory deposit_) {
+    function validateClaim(string memory id, string memory pwd) public view returns(string memory, address) {
         require(makeAndCompareHash(id, pwd), "Invalid password, hash doesn't match");
         return depositToString(id);
     }
@@ -88,7 +109,6 @@ contract DazzleProtocolV2 {
         require(makeAndCompareHash(id, pwd), "Invalid password, hash doesn't match");
         require(deposits[id].status == ClaimStatus.Opened, "Deposit already claimed!");
 
-        //beneficiary.transfer(deposits[id].amount); // Is TRX
         if (deposits[id].category == Category.NFT) {
             executeClaimNft(id, beneficiary); // Is an NFT
         }
@@ -123,12 +143,12 @@ contract DazzleProtocolV2 {
         return hashes[id] == hash;
     }
 
-    function depositToString(string memory id) private view returns (string memory deposit_) {
+    function depositToString(string memory id) private view returns (string memory, address) {
         string memory category = deposits[id].category == Category.NATIVE ? "0" : deposits[id].category == Category.TOKEN ? "1" : "2";
         string memory claimed = deposits[id].status == ClaimStatus.Closed ? "1" : "0";
         string memory isFungible = deposits[id].isFungible ? "1" : "0";
         
-        deposit_ = joinStrings(
+        string memory deposit_ = joinStrings(
             uintToString(deposits[id].tokenId),
             uintToString(deposits[id].amount),
             deposits[id].sender,
@@ -137,7 +157,7 @@ contract DazzleProtocolV2 {
             category
         );
 
-        return deposit_;
+        return (deposit_, deposits[id].contractAddr);
     }
 
     function joinStrings(string memory a, string memory b, string memory c, string memory d, string memory e, string memory f) 

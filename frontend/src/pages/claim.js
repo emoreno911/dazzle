@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useHedera } from "../context/hedera";
 import { useTron } from "../context/tron";
-import EmptyPage from "../app/claimtmp/EmptyPage";
-import ClaimPage from "../app/claimtmp/ClaimPage";
+import EmptyPage from "../app/claim/EmptyPage";
+import ClaimPage from "../app/claim/ClaimPage";
 
 
 function ClaimOnHedera() {

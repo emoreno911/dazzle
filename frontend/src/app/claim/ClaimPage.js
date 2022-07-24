@@ -18,9 +18,18 @@ function ClaimPage({ depositId, makeValidate }) {
     const submitValidation = async (pwd) => {
         setErrorMessage("");
         let response = await makeValidate({ id: depositId, pwd });
+        let item;
         if (!response.err) {
-            const [tokenId, amount, sender, isFungible, isClaimed] = response.result.split("|");
-            const item = {tokenId, amount, sender, isFungible, isClaimed};
+            if (Array.isArray(response.result)) { // response from tron is an Array
+                const tokenAddress = response.result[1]; //window.tronWeb.address.fromHex(response.result[1]);
+                const [tokenId, amount, sender, isFungible, isClaimed] = response.result[0].split("|");
+                item = {tokenId, amount, sender, isFungible, isClaimed, tokenAddress};
+            }
+            else {
+                const [tokenId, amount, sender, isFungible, isClaimed] = response.result.split("|");
+                item = {tokenId, amount, sender, isFungible, isClaimed};
+            }
+
             setItem(item)
             setIsValidated(true)
         }

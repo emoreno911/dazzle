@@ -1,9 +1,15 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useApp } from '../context/app';
+import { storeLocalDeposit } from '../utils';
 import {
 	getTronWeb,
+	setLibraryContract,
 	getWalletDetails,
-	getAccountTokens
+	getAccountTokens,
+	makeTransaction,
+	validateClaim,
+	setDeposit,
+	
 } from '../utils/tron/service';
 
 import { 
@@ -23,7 +29,10 @@ const DataContextProvider = (props) => {
 	const { fn:{setConnectedAccount} } = useApp();
 
 	useEffect(() => {
-		console.log("Tron context")
+		console.log("Tron context");
+		setTimeout(() => {
+			setLibraryContract();
+		}, 3000);
         //setWalletDetails();		
 	}, [])
 
@@ -58,23 +67,27 @@ const DataContextProvider = (props) => {
 	}
 
 	async function makeDeposit(data) {
-		console.log(data);
-		await delay(3000);
-		return data.amount !== 5 ?
-			{ result: "FAIL" } :
-			{ result: "SUCCESS", depositId: Date.now() }
+		// transfer assets
+		let tokenTX = await makeTransaction(data, accountInfo);
+		if (tokenTX.result !== "SUCCESS") {
+			console.log('TokenTX', tokenTX);
+			return tokenTX;
+		}
+
+		let result = await setDeposit(data);
+		storeLocalDeposit(result.depositId, data.amount, data.symbol, tokenTX.txid, "tron")
+		console.log('Deposit', result);
+		return result;
 	}
 
 	async function makeValidate(data) {
-		console.log(data);
-		await delay(3000);
+		let result = await validateClaim(data);
 		setValidatedData(data);
-		// {"err":true,"result":"INVALID_ID_PASSWORD"}
-		//return {err: false, result: 'TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj|10000000|TDhzyMXbYvcKd2Y995nEh8rdhxrq81Adq4|1|0'}
-		//return {err: false, result: 'TKopgjJTUdp5ZtTxanLoW3uy1A1sfAuBEE#4|1|TDhzyMXbYvcKd2Y995nEh8rdhxrq81Adq4|0|0'}
-		return {err: false, result: '0|100000000|TDhzyMXbYvcKd2Y995nEh8rdhxrq81Adq4|1|0'}
+		console.log('Validate', result);
+		return result;
 	}
 
+	// from backend
 	async function makeClaim(tokenId, data, isNewWallet = false) {
 		let beneficiary = accountInfo.address;
 		let newWallet = null;

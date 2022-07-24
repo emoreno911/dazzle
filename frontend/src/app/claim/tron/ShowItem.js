@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { getTokenInfo, getNftInfo } from '../../../utils/tron/service';
-import { divideByDecimals } from '../../../utils';
+import { divideByDecimals, isNullAddress } from '../../../utils';
 import ModalPairWalletClaim from './ModalPairWalletClaim';
 import ModalCreateWalletClaim from './ModalCreateWalletClaim';
 
 
-function TokenLayout({ tokenId, amount, tokenData }) {
-    let _amount = tokenId !== "0" ? divideByDecimals(amount, tokenData.decimals) : divideByDecimals(amount, 6);
+function TokenLayout({ tokenAddress, amount, tokenData }) {
+    let _amount = !isNullAddress(tokenAddress) ? divideByDecimals(amount, tokenData.decimals) : divideByDecimals(amount, 6);
     return (
         <>
             <h4 className="text-xl text-center font-bold text-white mb-6">CLAIM TOKENS</h4>
@@ -73,22 +73,22 @@ function NftLayout({ tokenData }) {
 function ShowItem({ item }) {
 
     const [tokenData, setTokenData] = useState({ symbol: 'TRX' });
-    const { tokenId, amount, sender, isFungible, isClaimed } = item;
+    const { tokenId, amount, sender, isFungible, isClaimed, tokenAddress } = item;
 
     const [disableClaim, setDisableClaim] = useState(false);
     const [wasClaimed, setWasClaimed] = useState(isClaimed !== "0");
     const claimedText = wasClaimed ? "was already Claimed" : "is available for Claim";
-    const tokenAddr = tokenId.indexOf('#') !== -1 ? tokenId.split('#')[0] : tokenId;
+    //const tokenAddr = tokenId.indexOf('#') !== -1 ? tokenId.split('#')[0] : tokenId;
 
     useEffect(() => {
-        if (tokenId === "0")
+        // TRX comes with 0x0000000000000000000000000000000000000000
+        if (isNullAddress(tokenAddress))
             return;
 
         if (isFungible === "1")
-            getTokenInfo(tokenId, tokenId).then(response => { setTokenData(response) })  
+            getTokenInfo(tokenAddress, tokenAddress).then(response => { setTokenData(response) })  
         else {
-            const id = tokenId.split('#')[1];
-            getNftInfo(tokenAddr, id).then(response => { setTokenData(response) })
+            getNftInfo(tokenAddress, tokenId).then(response => { setTokenData(response) })
         } 
 
     }, []);
@@ -97,7 +97,7 @@ function ShowItem({ item }) {
         <div className="link-page">
             {
                 isFungible === "1" ?
-                    <TokenLayout tokenId={tokenAddr} amount={amount} tokenData={tokenData} /> :
+                    <TokenLayout tokenAddress={tokenAddress} amount={amount} tokenData={tokenData} /> :
                     <NftLayout tokenData={tokenData} />
             }
             <div className="my-8">
@@ -110,14 +110,14 @@ function ShowItem({ item }) {
                             <>
                                 <ModalPairWalletClaim 
                                     buttonText={"Connect Wallet and Claim"} 
-                                    tokenId={tokenAddr} 
+                                    tokenId={tokenAddress} 
                                     item={item}
                                     disableClaim={disableClaim}
                                     setDisableClaim={setDisableClaim}
                                 />
                                 <ModalCreateWalletClaim 
                                     buttonText={"Create Wallet and Claim"} 
-                                    tokenId={tokenAddr} 
+                                    tokenId={tokenAddress} 
                                     item={item} 
                                     disableClaim={disableClaim}
                                     setDisableClaim={setDisableClaim}

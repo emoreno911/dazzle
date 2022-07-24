@@ -1,7 +1,6 @@
-//import TokenModal from './TokenModal';
 import TokenModalTron from "./TokenModalTron";
 
-const TokenItem = ({ symbol, balance, tokenId, type, name }) => {
+const TokenItem = ({ symbol, balance, tokenId, type, name, address, decimals }) => {
     if (type === 'NON_FUNGIBLE_UNIQUE')
         return <div></div>;
 
@@ -21,6 +20,9 @@ const TokenItem = ({ symbol, balance, tokenId, type, name }) => {
                     symbol={symbol}
                     tokenId={tokenId}
                     tokenType={type}
+                    address={address}
+                    decimals={decimals}
+                    balance={balance}
                 />
             </div>
         </div>

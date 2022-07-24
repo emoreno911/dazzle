@@ -14,11 +14,13 @@ const TokenList = ({ accountTokens, accountInfo }) => {
 				<span>Tokens</span>
 			</h3>
 			<TokenItem
-				tokenId={"0"}
+				tokenId={0}
 				name={"Tron"}
 				symbol={"TRX"}
+				decimals={6}
 				type={"FUNGIBLE_COMMON"}
 				balance={toFixedIfNecessary(accountInfo.balance, 2)}
+				address={"0x0000000000000000000000000000000000000000"}
 			/>
 			{
 				accountTokens.map(item => {
@@ -30,7 +32,9 @@ const TokenList = ({ accountTokens, accountInfo }) => {
 							key={symbol}
 							symbol={symbol}
 							balance={_balance}
-							tokenId={address}
+							decimals={decimals}
+							address={address}
+							tokenId={0}
 							name={name}
 							type={type}
 						/>

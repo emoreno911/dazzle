@@ -13,7 +13,7 @@ const NftModalTron = ({ nft, tokenName, tokenSymbol, image }) => {
 		fn:{ makeDeposit }		 
 	} = useTron();
     
-    const { address:tokenAddr, tokenId, metadata, tokenUri } = nft;
+    const { address, tokenId, metadata, tokenUri } = nft;
 
     const handleSubmit = async (pwd) => {
         if (isProcessing)
@@ -25,9 +25,12 @@ const NftModalTron = ({ nft, tokenName, tokenSymbol, image }) => {
         setErrorMessage("");
 
         let response = await makeDeposit({
+            symbol: tokenSymbol,
             sender: accountInfo.address,
             isFungible: false,
-            tokenId: `${tokenAddr}#${tokenId}`,
+            category: 2,
+            address,
+            tokenId,
             amount,
             hash
         });
