@@ -33,7 +33,7 @@ const DataContextProvider = (props) => {
 	useEffect(() => {
 		console.log("Tron context");
 		setTimeout(() => {
-			setLibraryContract();
+			getWalletDetails()//setLibraryContract();
 			getTronWeb()
 		}, 4000);
         //setWalletDetails();		
