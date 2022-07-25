@@ -1,5 +1,7 @@
-# DAZZLE
-A dApp that allows you to send tokens and NFT's to anyone through a simple LINK.
+# DAZZLE PROTOCOL
+Dazzle is a dApp that allows you to send tokens and NFT’s to anyone through a simple link, so you can onboard your friends into DeFi just by sending them a link via email or your favorite messaging app.
+
+With the Smartwallet feature users can get a wallet who is linked to a social account like Google, Facebook, Github, Twitter, etc. That's the only they need to send tokens, they can receive tokens in the Smartwallet too. At the moment only the Google authentication provider is enabled and is working with the Tron blockchain integration.
 
 Demo: https://testnet.dazzleprotocol.com/
 
