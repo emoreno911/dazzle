@@ -1,10 +1,10 @@
 # DAZZLE
 A dApp that allows you to send tokens and NFT's to anyone through a simple LINK.
 
-Demo: https://dazzle-protocol.vercel.app/
+Demo: https://testnet.dazzleprotocol.com/
 
 ## How we built it
-Dazzle's base architecture is made up of three parts: a frontend developed with *ReactJS*, in the backend we have an API with *ExpressJS* and the Smart Contract is made in *Solidity* and deployed in the Hedera blockchain. For the interaction with the user's wallet, the hashconnect library was used, which allows creating and authorizing transactions in *Hashpack*, here we found a limitation of the library that did not allow us to successfully execute the functions of the smart contract from the client, so said interactions were handled in the backend.
+Dazzle’s architecture is made up of three parts: the Smart Contracts for Dazzle Protocol and the Smartwallets which are made in Solidity and deployed over the Hedera network and Tron blockchain, the backend where we have an API with ExpressJS and the frontend made with ReactJS. For the interaction with the user’s wallet, Hashpack is used for the Hedera Network and TronLink is selected for Tron.
 
 ## What's next?
 We're working in our first multichain deployment over the TRON Blockchain.
