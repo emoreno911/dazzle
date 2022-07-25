@@ -21,11 +21,11 @@ const Header = () => {
                                 <span className="block font-semibold pr-4 h-12">Home</span>
                             </Link>
                         </li>
-                        <li className="inline-block">
+                        {/* <li className="inline-block">
                             <Link to="/claim">
                                 <span className="block font-semibold pr-4 h-12">Claim</span>
                             </Link>
-                        </li>
+                        </li> */}
                         <li className="inline-block">
                             <Link to="/tron/smartwallet">
                                 <span className="block font-semibold pr-4 h-12">Smartwallet</span>
