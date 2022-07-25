@@ -33,11 +33,16 @@ const DataContextProvider = (props) => {
 	useEffect(() => {
 		console.log("Tron context");
 		setTimeout(() => {
-			getWalletDetails()//setLibraryContract();
-			getTronWeb()
-		}, 4000);
+			init()
+		}, 5000);
         //setWalletDetails();		
 	}, [])
+
+	async function init() {
+		const res = await window.tronLink.request({method: 'tron_requestAccounts'})
+		getTronWeb()
+		console.log(res)
+	}
 
 	async function setWalletDetails() {
 		const interval = setInterval(async () => {
