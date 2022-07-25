@@ -11,7 +11,7 @@ const tronWeb = new window.TronWeb({
 export function getTronWeb(){
   // Obtain the tronweb object injected by tronLink 
   var obj = setInterval(async ()=>{
-    if (tronWeb && tronWeb.defaultAddress.base58) {
+    if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
         clearInterval(obj)
         console.log("tronWeb successfully detected!")
         //setupEvents()

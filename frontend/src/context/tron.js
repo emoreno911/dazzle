@@ -34,7 +34,8 @@ const DataContextProvider = (props) => {
 		console.log("Tron context");
 		setTimeout(() => {
 			setLibraryContract();
-		}, 3000);
+			getTronWeb()
+		}, 4000);
         //setWalletDetails();		
 	}, [])
 
