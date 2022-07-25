@@ -45,6 +45,8 @@ contract DazzleProtocolV2 {
 
     event TransferReceived(address indexed _from, uint _value);
     
+    event SmartWalletCreated(address addr);
+    
     constructor() {
         owner = msg.sender;
     }
@@ -68,6 +70,7 @@ contract DazzleProtocolV2 {
     
     function addSmartWallet(string memory socialid, address walletAddr) public onlyOwner {
         smartWallets[socialid] = walletAddr;
+        emit SmartWalletCreated(walletAddr);
     }
 
     function createDeposit(

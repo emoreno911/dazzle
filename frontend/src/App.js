@@ -9,6 +9,7 @@ import Hedera from './pages/hedera';
 import AppProvider from './context/app';
 import TronProvider from './context/tron';
 import HederaProvider from './context/hedera';
+import Smartwallet from './pages/smartwallet';
 
 const HederaLayout = () => {
 	return (
@@ -42,6 +43,7 @@ const App = () => {
 						<Route path="link/:depositId" element={<Link />} />
 						<Route path="claim/:depositId" element={<Claim />} />
 						<Route path="claim" element={<Claim />} />
+						<Route path="smartwallet" element={<Smartwallet />} />
 					</Route>
 					<Route path="/" element={<Layout />} >
 						<Route index element={<Home />} />

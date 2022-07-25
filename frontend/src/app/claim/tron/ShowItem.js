@@ -3,6 +3,7 @@ import { getTokenInfo, getNftInfo } from '../../../utils/tron/service';
 import { divideByDecimals, isNullAddress } from '../../../utils';
 import ModalPairWalletClaim from './ModalPairWalletClaim';
 import ModalCreateWalletClaim from './ModalCreateWalletClaim';
+import ModalSmartWalletClaim from './ModalSmartWalletClaim';
 
 
 function TokenLayout({ tokenAddress, amount, tokenData }) {
@@ -117,6 +118,13 @@ function ShowItem({ item }) {
                                 />
                                 <ModalCreateWalletClaim 
                                     buttonText={"Create Wallet and Claim"} 
+                                    tokenId={tokenAddress} 
+                                    item={item} 
+                                    disableClaim={disableClaim}
+                                    setDisableClaim={setDisableClaim}
+                                />
+                                <ModalSmartWalletClaim 
+                                    buttonText={"Claim with Smartwallet"} 
                                     tokenId={tokenAddress} 
                                     item={item} 
                                     disableClaim={disableClaim}

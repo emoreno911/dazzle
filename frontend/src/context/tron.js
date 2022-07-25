@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useApp } from '../context/app';
-import { storeLocalDeposit } from '../utils';
+import { storeLocalDeposit, delay } from '../utils';
 import {
 	getTronWeb,
 	setLibraryContract,
@@ -9,11 +9,13 @@ import {
 	makeTransaction,
 	validateClaim,
 	setDeposit,
-	
 } from '../utils/tron/service';
 
 import { 
-	getAccountInfo
+	getAccountInfo,
+	executeClaimTron,
+	deployBaseWallet,
+	withdrawFromSmartwallet
 } from '../utils/tron/api';
 
 const DataContext = createContext();
@@ -88,7 +90,10 @@ const DataContextProvider = (props) => {
 	}
 
 	// from backend
-	async function makeClaim(tokenId, data, isNewWallet = false) {
+	async function makeClaim(tokenId, data, isNewWallet = false, isSmartWallet = false) {
+		if (Object.keys(validatedData).length === 0) // claim not validated
+			return {result: "FAIL"};
+
 		let beneficiary = accountInfo.address;
 		let newWallet = null;
 
@@ -96,14 +101,34 @@ const DataContextProvider = (props) => {
 			newWallet = await window.tronWeb.createAccount();
 			beneficiary = newWallet.address.base58;
 		}
+		else if (isSmartWallet) {
+			let { socialid, pincode, address } = data;
 
-		// let result = await executeClaim({
-		// 	id: validatedData.id,
-		// 	pwd: validatedData.pwd,
-		// 	beneficiary,
-		// });
-		let result = {result: "SUCCESS"};
-		await delay(3000);
+			if (address !== null) { // check if user has an smartwallet already
+				beneficiary = address;
+				newWallet = address;
+			}
+			else {
+				let smartwallet = await deployBaseWallet({ socialid, pincode });
+
+				if (smartwallet.result !== "SUCCESS") {
+					return smartwallet;
+				}
+
+				beneficiary = smartwallet.base58;
+				newWallet = smartwallet.base58;
+			}
+		}
+
+		let result = await executeClaimTron({
+			id: validatedData.id,
+			pwd: validatedData.pwd,
+			beneficiary,
+		});
+
+		if (result.result === "SUCCESS") {
+			setValidatedData({});
+		}
 
 		console.log('Claim Done', data, result);
 		return {
@@ -112,8 +137,13 @@ const DataContextProvider = (props) => {
 		};
 	}
 
-	const delay = (ms) => {
-		return new Promise((resolve) => setTimeout(() => resolve(), ms))
+
+	async function makeWithdrawal(data) {
+		let result = await withdrawFromSmartwallet(data);
+		// delay(3000);
+		// let result = { result: "SUCCESS" };
+		console.log('makeWithdrawal', data, result);
+		return result;
 	}
 
 	const isMobile = () => {
@@ -132,7 +162,8 @@ const DataContextProvider = (props) => {
 		makeDeposit,
 		makeValidate,
 		makeClaim,
-		setWalletDetails
+		setWalletDetails,
+		makeWithdrawal
 	}
 
 	return (

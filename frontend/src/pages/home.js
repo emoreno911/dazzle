@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import HeroHome from '../app/common/HeroHome'
 
-const Hogar = () => (
+const Home = () => (
     <>
         <div className="home-unpaired flex flex-col items-center justify-center">
             <HeroHome />
@@ -32,4 +32,4 @@ const Hogar = () => (
     </>
 )
 
-export default Hogar
+export default Home

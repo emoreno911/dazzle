@@ -37,8 +37,15 @@ const Tron = () => {
 			<div className="mb-2"></div>
 			<NftList accountNfts={accountNfts} />
 
-			<div className="flex items-center justify-center my-5">
+			<div className="flex flex-col items-center justify-center my-5">
 				<small className="block badge-trx">Working on Nile Testnet</small>
+				<a 
+					href={`https://nileex.io/join/getJoinPage`} 
+					className="block text-sm text-gray-400 mt-2"
+					target="_blank" 
+				> 
+					Testnet faucet
+				</a>
 			</div>
 		</div>
 	) :

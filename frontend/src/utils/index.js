@@ -78,6 +78,17 @@ export const storeLocalDeposit = (depositId, amount, token, txid, network) => {
 	localStorage.setItem(storeName, JSON.stringify(arr));
 }
 
+export const setCurrentSmartwallet = (addr) => {
+	const storeName = "dazzle-smartwallet";
+	localStorage.setItem(storeName, addr);
+}
+
+export const getCurrentSmartwallet = () => {
+	const storeName = "dazzle-smartwallet";
+	const addr = localStorage.getItem(storeName);
+	return addr;
+}
+
 window.listDeposits = () => {
 	const storeName = "dazzle-deposits";
 	let existing = localStorage.getItem(storeName);

@@ -10,6 +10,14 @@ const {
     executeClaim
 } = require('../services/hedera');
 
+const {
+    executeClaimTron,
+    deployBaseWallet,
+    withdrawTokenSW,
+    withdrawTronSW,
+    withdrawNftSW
+} = require('../services/tron');
+
 const router = express.Router();
 
 router.post('/getAccountInfo', async (request, response) => {
@@ -54,6 +62,35 @@ router.post('/executeClaimToken', async (request, response) => {
 router.post('/generateNewWallet', async (request, response) => {
     const { tokenId } = request.body;
     const result = await generateNewWallet(tokenId);
+    response.json(result);
+});
+
+router.post('/executeClaimTron', async (request, response) => {
+	const { id, pwd, beneficiary } = request.body;
+    const result = await executeClaimTron(id, pwd, beneficiary);
+    response.json(result);
+});
+
+router.post('/deployBaseWallet', async (request, response) => {
+	const { socialid, pincode } = request.body;
+    const result = await deployBaseWallet(socialid, pincode);
+    response.json(result);
+});
+
+router.post('/withdrawFromSmartwallet', async (request, response) => {
+	const { smartwalletAddress, amount, tokenId, beneficiary, pin, contractAddr } = request.body;
+    let result;
+    
+    if (amount === null) {
+        result = await withdrawNftSW(smartwalletAddress, tokenId, beneficiary, pin, contractAddr);
+    }
+    else if (contractAddr === null) {
+        result = await withdrawTronSW(smartwalletAddress, amount, beneficiary, pin);
+    }
+    else {
+        result = await withdrawTokenSW(smartwalletAddress, amount, beneficiary, pin, contractAddr)
+    }
+    
     response.json(result);
 });
 

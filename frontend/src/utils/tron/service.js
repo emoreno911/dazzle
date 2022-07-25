@@ -1,19 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
-import {delay} from '../index'
 
-//const _tronWeb = window.tronWeb;
-let account = null;
-let dazzleAddress = 'TA3oLn5bVcAPYogzq1q8A6PKjarrko4VFh'; //'TTtsKYJHQnWzCdAyNcDW72F1HuTtkThKid' ;
-let dazzleContract = null;
+let dazzleAddress = 'TA3oLn5bVcAPYogzq1q8A6PKjarrko4VFh'; 
 
-export const accountAddress = () => {
-  return account
-}
+const tronWeb = new window.TronWeb({
+    fullHost: 'https://nile.trongrid.io',
+    //headers: { "TRON-PRO-API-KEY": 'your api key' },
+    privateKey: process.env.REACT_APP_TRONGRID_PK
+});
 
 export function getTronWeb(){
   // Obtain the tronweb object injected by tronLink 
   var obj = setInterval(async ()=>{
-    if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+    if (tronWeb && tronWeb.defaultAddress.base58) {
         clearInterval(obj)
         console.log("tronWeb successfully detected!")
         //setupEvents()
@@ -23,9 +21,9 @@ export function getTronWeb(){
 
 export const getBalance = async () => {
     //if wallet installed and logged , getting TRX token balance
-    if (window.tronWeb && window.tronWeb.ready) {
-        let walletBalances = await window.tronWeb.trx.getAccount(
-            window.tronWeb.defaultAddress.base58
+    if (window.tronLink.tronWeb && window.tronLink.tronWeb.ready) {
+        let walletBalances = await window.tronLink.tronWeb.trx.getAccount(
+            window.tronLink.tronWeb.defaultAddress.base58
         );
         return walletBalances;
     } else {
@@ -34,9 +32,9 @@ export const getBalance = async () => {
 }
 
 export const getWalletDetails = async () => {
-    if (window.tronWeb) {
+    if (window.tronLink.tronWeb) {
         //checking if wallet injected
-        if (window.tronWeb.ready) {
+        if (window.tronLink.tronWeb.ready) {
             let tempBalance = await getBalance();
             let tempFrozenBalance = 0;
 
@@ -78,11 +76,11 @@ export const getWalletDetails = async () => {
 
             //we have wallet and we are logged in
             const details = {
-                name: window.tronWeb.defaultAddress.name,
-                address: window.tronWeb.defaultAddress.base58,
+                name: window.tronLink.tronWeb.defaultAddress.name,
+                address: window.tronLink.tronWeb.defaultAddress.base58,
                 balance: tempBalance.balance / 1000000,
                 frozenBalance: tempFrozenBalance / 1000000,
-                network: window.tronWeb.fullNode.host,
+                network: window.tronLink.tronWeb.fullNode.host,
                 link: 'true',
             };
             return {
@@ -114,7 +112,7 @@ export const getWalletDetails = async () => {
 }
  
 export async function getTokenInfo(contractAddr, holderAddr) {
-    let contract = await window.tronWeb.contract().at(contractAddr);
+    let contract = await tronWeb.contract().at(contractAddr);
     let decimals = 0;
     //let isFungible = false;
     let type = "NON_FUNGIBLE_UNIQUE"
@@ -145,7 +143,7 @@ export async function getTokenInfo(contractAddr, holderAddr) {
 }
 
 export async function getNftInfo(contractAddr, tokenId) {
-    let contract = await window.tronWeb.contract().at(contractAddr);
+    let contract = await tronWeb.contract().at(contractAddr);
     try {
         let name = await contract.name().call();
         let symbol = await contract.symbol().call();
@@ -166,7 +164,7 @@ export async function getNftInfo(contractAddr, tokenId) {
 }
 
 export async function getNftInfoByOwnerIndex(contractAddr, holderAddr, index) {
-    let contract = await window.tronWeb.contract().at(contractAddr);
+    let contract = await tronWeb.contract().at(contractAddr);
     try {
         let tokenId = await contract.tokenOfOwnerByIndex(holderAddr, index).call();
         let tokenUri = await contract.tokenURI(tokenId).call();
@@ -212,40 +210,40 @@ export async function getAccountTokens(tokens, holderAddr) {
 }
 
 export async function setLibraryContract() {
-    // TODO: abtain contract Object
-    dazzleContract = await window.tronWeb.contract().at(dazzleAddress);
+    //dazzleContract = await tronWeb.contract().at(dazzleAddress);
 }
 
 // makeTransaction
 export async function makeTransaction(data, accountInfo) {
     const {tokenId, amount, category, address} = data;
+    const tronWallet = window.tronLink.tronWeb;
     let result;
 
     try {
         if (category === 0) {
-            const tx = await window.tronWeb.transactionBuilder.sendTrx(dazzleAddress, amount);
-            const signedTx = await window.tronWeb.trx.sign(tx);
-            const receipt = await window.tronWeb.trx.sendRawTransaction(signedTx);
+            const tx = await tronWallet.transactionBuilder.sendTrx(dazzleAddress, amount);
+            const signedTx = await tronWallet.trx.sign(tx);
+            const receipt = await tronWallet.trx.sendRawTransaction(signedTx);
             result = { result: receipt.result ? "SUCCESS" : "FAIL", txid: receipt.txid };
         }
         else if (category === 1) {
-            const trc20 = await window.tronWeb.contract().at(address);
+            const trc20 = await tronWallet.contract().at(address);
             const tx = await trc20
                 .transfer(dazzleAddress, amount)
                 .send({
                     feeLimit: 100_000_000
                 });
-            //const txInfo = await window.tronWeb.trx.getTransactionInfo(tx);
+            //const txInfo = await tronWallet.trx.getTransactionInfo(tx);
             result = { result: "SUCCESS", txid: tx }
         }
         else if (category === 2) {
-            const trc721 = await window.tronWeb.contract().at(address);
+            const trc721 = await tronWallet.contract().at(address);
             const tx = await trc721
                 .transferFrom(accountInfo.address, dazzleAddress, tokenId)
                 .send({
                     feeLimit: 100_000_000
                 });
-            //const txInfo = await window.tronWeb.trx.getUnconfirmedTransactionInfo(tx);
+            //const txInfo = await tronWallet.trx.getUnconfirmedTransactionInfo(tx);
             result = { result: "SUCCESS", txid: tx }
         }        
     } catch (error) {
@@ -260,6 +258,7 @@ export async function makeTransaction(data, accountInfo) {
 // setDeposit
 export async function setDeposit(data) {
     const {tokenId, hash, amount, sender, isFungible, category, address,} = data;
+    const dazzleContract = await window.tronLink.tronWeb.contract().at(dazzleAddress);
 
     try {
         const id = uuidv4();
@@ -290,6 +289,7 @@ export async function setDeposit(data) {
 // validateClaim
 export async function validateClaim(data) {
     const {id, pwd} = data;
+    const dazzleContract = await tronWeb.contract().at(dazzleAddress);
 
     try {
         const result = await dazzleContract
@@ -309,26 +309,25 @@ export async function validateClaim(data) {
     }
 }
 
-// executeClaim
-export async function executeClaim(data) {
-    const {id, pwd, beneficiary} = data;
+
+export async function getSmartWallet(socialid) {
+    const dazzleContract = await tronWeb.contract().at(dazzleAddress);
 
     try {
         const result = await dazzleContract
-            .executeClaim(id, pwd, beneficiary)
-            .send({
-                feeLimit: 100_000_000
-            });
+            .getSmartWallet(socialid)
+            .call();
   
         return {
             err: false,
-            result: "SUCCESS"
+            hex: result,
+            base58: tronWeb.address.fromHex(result)
         }
     } catch (error) {
         console.log(error)
         return {
             err: true,
-			result: "INVALID_ID_PASSWORD"
+			result: "FAIL"
         }
     }
 }

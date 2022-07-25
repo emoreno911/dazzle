@@ -9,16 +9,20 @@ const ModalPairWalletClaim = ({ buttonText, tokenId, item, disableClaim, setDisa
 	} = useTron();
 
 	const [claimComplete, setClaimComplete] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
 
 	const handleClaimTokens = async () => {
 		if (disableClaim)
 			return;
 
+        setIsProcessing(true)
         let res = await makeClaim(tokenId, item);
         if (res.result === 'SUCCESS') {
             setClaimComplete(true)
             setDisableClaim(true)
-        }	
+        }
+        
+        setIsProcessing(false);
 	}
 
 	return (
@@ -26,7 +30,7 @@ const ModalPairWalletClaim = ({ buttonText, tokenId, item, disableClaim, setDisa
 			activator={({ setShow }) => (
 				<button 
                     type="button" 
-                    className="flex w-full text-center text-md px-5 py-2 my-5 text-white rounded-md bg-yellow-500 focus:outline-none"
+                    className="flex w-full text-center text-md px-5 py-2 my-5 text-white rounded-md bg-color-alt focus:outline-none"
                     onClick={() => setShow(true)}
                 > 
                     <span className="block mx-auto">{ buttonText }</span>    
@@ -61,7 +65,9 @@ const ModalPairWalletClaim = ({ buttonText, tokenId, item, disableClaim, setDisa
                                         onClick={() => handleClaimTokens()}
                                     >
                                         <div>
-                                            <span className="block text-md">Claim Tokens</span>
+                                            <span className="block text-md">
+                                                { isProcessing ? "Processing..." : "Claim Tokens" }
+                                            </span>
                                         </div>
                                     </button>
                                 ):

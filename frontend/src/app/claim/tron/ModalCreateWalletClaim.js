@@ -87,7 +87,7 @@ const ModalCreateWalletClaim = ({ buttonText, tokenId, item, disableClaim, setDi
                             </div>
                             <div className="text-center">
                                 <a 
-                                    className="block text-md text-yellow-500"
+                                    className="block text-md text-yellow-400"
                                     href={`https://nile.tronscan.org/#/address/${newAddress}`} 
                                     target="_blank"
                                 >
