@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-let dazzleAddress = 'TA3oLn5bVcAPYogzq1q8A6PKjarrko4VFh'; 
+let dazzleAddress = 'TMYSPZ4asZLHgAJLuyNSd8qgzPGzhkLV2X'; 
 
 const tronWeb = new window.TronWeb({
     fullHost: 'https://nile.trongrid.io',

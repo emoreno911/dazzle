@@ -18,6 +18,7 @@ const Smartwallet = () => {
 
     const checkSmartwalletAddress = async () => {
         let _smartwalletAddr = await getSmartWallet(user.uid);
+        console.log(_smartwalletAddr)
         let addr = isNullAddress(_smartwalletAddr.hex) ? null : _smartwalletAddr.base58;
         setCurrentSmartwallet(addr);
         setSmartwalletAddr(addr);
@@ -26,10 +27,12 @@ const Smartwallet = () => {
     return !user ?
         (
             <div className="home-unpaired flex flex-col items-center justify-center">
-                <p className="text-5xl pb-5 text-gray-300 font-semibold">The wallet linked to your social account</p>
-                <p className="text-xl py-5 text-gray-300">Now you can have a wallet to send a receive tokens and NFTs</p>
+                <p className="text-5xl pb-5 text-gray-300 font-semibold">Get a wallet linked to your social account</p>
+                <p className="text-xl py-5 text-gray-300">This is a wallet to send and receive tokens or NFTs easely</p>
 
-                <SocialLogin />
+                <div className="w-80">
+                    <SocialLogin />
+                </div>
 
                 <div className="flex items-center justify-center my-5">
                     <small className="block text-gray-400">Currently on Testnet</small>

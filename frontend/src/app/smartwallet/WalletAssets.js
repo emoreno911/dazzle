@@ -40,7 +40,7 @@ const WalletAssets = ({ address }) => {
 	}
 
     if (address === null) {
-        return <div><small className="mt-4 block text-gray-400">No wallet</small></div>
+        return <div><small className="mt-4 block text-gray-400">No wallet created for this user yet!</small></div>
     }
 
 	return (
